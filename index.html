@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>삼계중학교 자율형 종합감사 체크리스트</title>
+<style>
+  :root{
+    --cream:#FFFAEF; --paper:#FFFFFF; --ink:#2B2622; --muted:#8A7F73;
+    --line:#EAE0CF; --line-soft:#F5EFE2;
+    --terra:#B85C38; --terra-dark:#9A3C1C; --terra-soft:#F4E3DA;
+    --forest:#3F6B4E; --forest-soft:#E4EDE5;
+    --mustard:#D9A52B; --mustard-soft:#FBF0D4; --mustard-ink:#8A6A12;
+    --blue:#2B5EA7; --blue-soft:#E3EBF8; --blue-dark:#1A3D78;
+    --red:#C0392B; --red-soft:#FDECEA;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--cream);color:var(--ink);
+    font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;line-height:1.55;}
+
+  /* ===== Header ===== */
+  header{position:sticky;top:0;z-index:30;background:rgba(255,250,239,0.97);
+    backdrop-filter:blur(8px);border-bottom:2px solid var(--line);}
+  .head-inner{max-width:1000px;margin:0 auto;padding:12px 16px 0;}
+  .school-badge{display:inline-flex;align-items:center;gap:5px;
+    background:var(--terra);color:#fff;font-size:11px;font-weight:800;
+    letter-spacing:1px;padding:2px 9px;border-radius:99px;margin-bottom:4px;}
+  h1{font-size:19px;margin:2px 0 1px;font-weight:800;letter-spacing:-0.5px;}
+  .sub{font-size:11.5px;color:var(--muted);}
+  .school-info{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 3px;}
+  .info-chip{font-size:11px;background:var(--paper);border:1px solid var(--line);
+    border-radius:6px;padding:2px 8px;color:var(--ink);}
+  .info-chip b{color:var(--terra-dark);}
+  .info-chip-link{text-decoration:none;background:var(--terra);color:#fff;font-weight:700;
+    border-color:var(--terra);cursor:pointer;transition:all .12s;}
+  .info-chip-link:hover{background:var(--terra-dark);border-color:var(--terra-dark);}
+
+  /* ===== 자료실 미리보기 ===== */
+  .archive-wrap{position:relative;display:inline-block;}
+  .archive-panel{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:40;
+    width:320px;max-width:90vw;background:var(--paper);border:1.5px solid var(--line);
+    border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.14);overflow:hidden;}
+  .archive-panel.open{display:block;}
+  .archive-panel-head{display:flex;align-items:center;justify-content:space-between;
+    padding:9px 12px;background:var(--terra-soft);font-size:12.5px;font-weight:800;color:var(--terra-dark);}
+  .archive-panel-head a{font-size:11px;font-weight:700;color:var(--blue);text-decoration:none;}
+  .archive-iframe-box{height:280px;background:#FAFAFA;}
+  .archive-iframe-box iframe{width:100%;height:100%;border:0;}
+  .archive-panel-foot{padding:6px 12px;font-size:10.5px;color:var(--muted);
+    border-top:1px solid var(--line-soft);background:#FDFBF5;}
+  .progress-row{display:flex;align-items:center;gap:10px;margin:8px 0 2px;}
+  .bar-track{flex:1;height:10px;background:var(--terra-soft);border-radius:99px;overflow:hidden;}
+  .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--forest),#5A8C6B);border-radius:99px;transition:width .35s ease;}
+  .pct{font-size:13px;font-weight:800;color:var(--forest);min-width:100px;text-align:right;}
+  .pct small{color:var(--muted);font-weight:600;}
+
+  /* ===== Tab Grid ===== */
+  .tabbar{max-width:1000px;margin:0 auto;padding:8px 16px 10px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+  @media(max-width:700px){.tabbar{grid-template-columns:repeat(3,1fr);}}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;
+    font-family:inherit;font-size:11.5px;font-weight:700;color:var(--ink);
+    background:var(--paper);border:1.5px solid var(--line);border-radius:9px;
+    padding:7px 5px 6px;text-align:center;transition:all .14s;line-height:1.3;}
+  .tab .tab-icon{font-size:17px;line-height:1;}
+  .tab .tab-label{font-size:10.5px;}
+  .tab .badge{font-family:Consolas,monospace;font-size:10px;font-weight:700;
+    background:var(--forest-soft);color:var(--forest);padding:1px 5px;border-radius:99px;}
+  .tab:hover{border-color:var(--terra);}
+  .tab.active{background:var(--terra);color:#fff;border-color:var(--terra);}
+  .tab.active .badge{background:rgba(255,255,255,0.25);color:#fff;}
+  .tab .badge.full{background:var(--forest);color:#fff;}
+  .tab.active .badge.full{background:#fff;color:var(--terra);}
+
+  /* ===== Content ===== */
+  .wrap{max-width:1000px;margin:0 auto;padding:8px 16px 80px;}
+  .panel{display:none;animation:fade .22s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  /* 일정/정보 카드 */
+  .sched-card{background:var(--blue-soft);border:1.5px solid #AABFE0;border-radius:12px;
+    padding:13px 15px;margin:12px 0 4px;}
+  .sched-card h3{margin:0 0 9px;font-size:13.5px;color:var(--blue-dark);letter-spacing:-0.3px;}
+  .sched-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .sched-table th{background:var(--blue);color:#fff;padding:5px 9px;text-align:left;font-weight:700;}
+  .sched-table td{padding:6px 9px;border-bottom:1px solid #C8D8EF;vertical-align:top;}
+  .sched-table tr:last-child td{border-bottom:none;}
+  .sched-table tr:nth-child(even) td{background:rgba(43,94,167,0.04);}
+  .phase-badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;white-space:nowrap;}
+  .phase-1{background:#D4EBDA;color:#2A6B3C;}
+  .phase-2{background:#FBF0D4;color:#8A6A12;}
+  .phase-3{background:#F4E3DA;color:#9A3C1C;}
+  .today-marker{background:#FFF3CD;border:1.5px solid #F0C844;border-radius:7px;padding:5px 9px;
+    font-size:12px;color:#7A5800;margin-top:7px;display:flex;align-items:center;gap:5px;}
+
+  .panel-intro{background:var(--mustard-soft);border:1px solid #EAD49A;border-radius:12px;
+    padding:12px 15px;margin:12px 0 4px;font-size:13px;color:#5E5238;}
+  .panel-intro b{color:var(--mustard-ink);}
+
+  /* ===== 평가 사례 카드 (신규) ===== */
+  .eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 4px;}
+  @media(max-width:600px){.eval-grid{grid-template-columns:1fr;}}
+  .eval-card{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;}
+  .eval-card-head{display:flex;align-items:center;gap:8px;padding:9px 13px;
+    background:#FDFBF5;border-bottom:1px solid var(--line);}
+  .eval-card-icon{font-size:20px;}
+  .eval-card-title{font-size:13px;font-weight:800;color:var(--ink);}
+  .eval-card-body{padding:11px 13px;font-size:12.5px;}
+  .eval-wrong{background:var(--red-soft);border-radius:7px;padding:7px 10px;margin-bottom:7px;color:var(--red);}
+  .eval-right{background:var(--forest-soft);border-radius:7px;padding:7px 10px;color:var(--forest);}
+  .eval-label{font-size:10.5px;font-weight:800;letter-spacing:1px;margin-bottom:3px;opacity:0.8;}
+  .eval-note{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5;}
+  .eval-stat{display:inline-block;background:var(--terra-soft);color:var(--terra-dark);
+    font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;margin-top:4px;}
+
+  /* ===== 섹션 ===== */
+  .section{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin-top:12px;overflow:hidden;}
+  .sec-head{display:flex;align-items:center;gap:10px;padding:11px 15px;
+    border-bottom:1px solid var(--line);background:#FDFBF5;}
+  .sec-mark{flex:none;width:7px;height:24px;border-radius:4px;background:var(--terra);}
+  .sec-title{flex:1;font-size:14.5px;font-weight:800;letter-spacing:-0.3px;}
+  .sec-count{font-family:Consolas,monospace;font-size:11.5px;font-weight:700;
+    color:var(--forest);background:var(--forest-soft);padding:2px 8px;border-radius:99px;white-space:nowrap;}
+  .sec-count.full{background:var(--forest);color:#fff;}
+
+  ul.items{list-style:none;margin:0;padding:4px 0;}
+  li.item{display:flex;gap:11px;align-items:flex-start;padding:10px 15px;cursor:pointer;
+    border-bottom:1px solid var(--line-soft);transition:background .12s;}
+  li.item:last-child{border-bottom:none;}
+  li.item:hover{background:#FDFAF2;}
+  .box{flex:none;width:20px;height:20px;margin-top:1px;border:2px solid #C9BBA4;
+    border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+  .box svg{width:12px;height:12px;opacity:0;transform:scale(.5);transition:all .15s;stroke:#fff;}
+  .item.checked .box{background:var(--forest);border-color:var(--forest);}
+  .item.checked .box svg{opacity:1;transform:scale(1);}
+  .it-body{flex:1;min-width:0;}
+  .it-text{font-size:13.5px;transition:color .12s;}
+  .item.checked .it-text{color:var(--muted);text-decoration:line-through;text-decoration-color:#C9BBA4;}
+  .it-note{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+  .it-note b{color:var(--terra-dark);}
+  .it-ref{display:inline-block;font-family:Consolas,monospace;font-size:10px;color:#A6987F;
+    margin-top:3px;background:#F6F1E6;border:1px solid var(--line);padding:1px 6px;border-radius:5px;}
+  .tag{display:inline-block;font-family:Consolas,monospace;font-size:10px;font-weight:700;
+    padding:1px 6px;border-radius:5px;margin-left:6px;background:var(--mustard-soft);
+    color:var(--mustard-ink);border:1px solid #EAD49A;white-space:nowrap;vertical-align:1px;}
+  .tag.crit{background:var(--terra-soft);color:var(--terra-dark);border-color:#E2B7A4;}
+  .tag.star{background:#FCE9D6;color:#A4500E;border-color:#F0C49B;}
+  .tag.good{background:var(--forest-soft);color:var(--forest);border-color:#BCD3C0;}
+  .tag.blue{background:var(--blue-soft);color:var(--blue);border-color:#AABFE0;}
+
+  /* ===== 확인서 작성 요령 전용 ===== */
+  .confirm-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    background:var(--blue-soft);border:1.5px solid #AABFE0;border-radius:11px;
+    padding:11px 14px;margin:12px 0 4px;font-size:13px;}
+  .confirm-flow-step{background:var(--blue);color:#fff;font-weight:800;font-size:11.5px;
+    padding:4px 9px;border-radius:7px;white-space:nowrap;}
+  .confirm-flow-arrow{color:var(--blue);font-weight:800;font-size:15px;}
+  .confirm-form{background:var(--paper);border:2px solid var(--line);border-radius:12px;
+    padding:15px 17px;margin:10px 0;font-size:13px;}
+  .confirm-form-title{font-size:15px;font-weight:800;text-align:center;
+    letter-spacing:4px;margin-bottom:12px;color:var(--ink);}
+  .confirm-field{border-left:3px solid var(--terra);padding:6px 10px;margin:8px 0;
+    background:#FDFBF5;border-radius:0 6px 6px 0;}
+  .confirm-field-label{font-size:11px;font-weight:800;color:var(--terra-dark);
+    letter-spacing:0.5px;margin-bottom:2px;}
+  .confirm-field-desc{font-size:12.5px;color:var(--ink);line-height:1.6;}
+  .confirm-field-tip{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+  .principle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0;}
+  @media(max-width:600px){.principle-grid{grid-template-columns:1fr;}}
+  .principle-card{border-radius:11px;overflow:hidden;border:1.5px solid var(--line);}
+  .principle-card-head{padding:9px 13px;font-weight:800;font-size:13.5px;
+    display:flex;align-items:center;gap:7px;}
+  .pc-1 .principle-card-head{background:#EDE8F8;color:#5B3EB5;}
+  .pc-2 .principle-card-head{background:#E8F3EE;color:#2A6B3C;}
+  .pc-3 .principle-card-head{background:#FBF0D4;color:#8A6A12;}
+  .principle-card-body{padding:10px 13px;font-size:12.5px;background:var(--paper);}
+  .principle-ex{background:#F6F1E6;border-radius:7px;padding:7px 10px;margin-top:7px;}
+  .principle-ex-bad{color:var(--red);font-size:12px;margin-bottom:4px;}
+  .principle-ex-good{color:var(--forest);font-size:12px;font-weight:700;}
+  .example-box{background:#F0F7F2;border:1.5px solid #BCD3C0;border-radius:10px;
+    padding:12px 14px;margin:8px 0;font-size:12.5px;line-height:1.65;}
+  .example-box .ex-bad{color:var(--red);background:var(--red-soft);border-radius:7px;
+    padding:7px 10px;margin-bottom:6px;}
+  .example-box .ex-good{color:#1A5C30;background:#E4F2E9;border-radius:7px;padding:7px 10px;}
+  .ex-label{font-size:10.5px;font-weight:800;letter-spacing:0.5px;margin-bottom:3px;opacity:0.8;}
+  .jiji-form{background:var(--paper);border:2px solid var(--line);border-radius:11px;
+    padding:13px 16px;margin:10px 0;font-size:12.5px;line-height:1.65;}
+  .jiji-form h4{font-size:14px;font-weight:800;text-align:center;letter-spacing:3px;
+    margin:0 0 10px;color:var(--ink);}
+  .jiji-row{display:flex;gap:6px;margin:4px 0;font-size:12.5px;}
+  .jiji-key{font-weight:700;color:var(--terra-dark);min-width:45px;flex-none;}
+
+  /* ===== Footer ===== */
+  .controls{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:24px;}
+  .note-foot{font-size:11px;color:var(--muted);max-width:640px;line-height:1.55;}
+  .btn-reset{font-family:inherit;font-size:13px;font-weight:700;color:var(--terra);background:#fff;
+    border:1.5px solid var(--terra);border-radius:8px;padding:7px 14px;cursor:pointer;transition:all .12s;}
+  .btn-reset:hover{background:var(--terra);color:#fff;}
+  li.item:focus-visible,.tab:focus-visible{outline:3px solid var(--mustard);outline-offset:2px;}
+  @media(max-width:600px){
+    h1{font-size:16px;}
+    .sec-title{font-size:13.5px;} .it-text{font-size:13px;}
+  }
+  @media print{
+    header{position:static;} .tabbar{display:flex;flex-wrap:wrap;}
+    .panel{display:block!important;} .btn-reset{display:none;}
+    .section{break-inside:avoid;} body{background:#fff;}
+  }
+
+  /* ===== Q&A ===== */
+  .qna-intro{background:var(--mustard-soft);border:1px solid #EAD49A;border-radius:12px;
+    padding:12px 15px;margin:12px 0 4px;font-size:13px;color:#5E5238;line-height:1.6;}
+  .qna-intro b{color:var(--mustard-ink);}
+  .qna-new-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+    margin-top:12px;font-family:inherit;font-size:14px;font-weight:800;color:#fff;
+    background:var(--terra);border:none;border-radius:12px;padding:13px;cursor:pointer;transition:all .12s;}
+  .qna-new-btn:hover{background:var(--terra-dark);}
+  .qna-filterbar{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 4px;}
+  .qna-filter-chip{font-family:inherit;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:99px;
+    border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;transition:all .12s;}
+  .qna-filter-chip.active{background:var(--terra);color:#fff;border-color:var(--terra);}
+  .qna-list{margin-top:10px;display:flex;flex-direction:column;gap:9px;}
+  .qna-empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 10px;}
+  .qna-card{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;}
+  .qna-card-head{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;}
+  .qna-cat-badge{flex:none;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;
+    background:var(--blue-soft);color:var(--blue);white-space:nowrap;}
+  .qna-q-title{flex:1;font-size:13.5px;font-weight:700;color:var(--ink);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .qna-status{flex:none;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap;}
+  .qna-status.wait{background:var(--mustard-soft);color:var(--mustard-ink);}
+  .qna-status.done{background:var(--forest-soft);color:var(--forest);}
+  .qna-meta{flex:none;font-size:10.5px;color:var(--muted);}
+  .qna-chevron{flex:none;font-size:11px;color:var(--muted);transition:transform .15s;}
+  .qna-card.open .qna-chevron{transform:rotate(180deg);}
+  .qna-card-body{display:none;padding:0 14px 14px;border-top:1px solid var(--line-soft);}
+  .qna-card.open .qna-card-body{display:block;}
+  .qna-q-full{font-size:13.5px;color:var(--ink);line-height:1.6;margin:11px 0 8px;white-space:pre-wrap;}
+  .qna-answer-box{background:var(--forest-soft);border-radius:8px;padding:10px 12px;margin-bottom:8px;
+    font-size:13px;color:#1A5C30;line-height:1.6;white-space:pre-wrap;}
+  .qna-answer-label{font-size:10.5px;font-weight:800;color:var(--forest);margin-bottom:4px;}
+  .qna-wait-box{background:#F6F1E6;border-radius:8px;padding:9px 12px;margin-bottom:8px;
+    font-size:12.5px;color:var(--muted);}
+  .qna-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .qna-btn{font-family:inherit;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:7px;
+    border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;transition:all .12s;}
+  .qna-btn:hover{border-color:var(--terra);}
+  .qna-btn.primary{background:var(--terra);color:#fff;border-color:var(--terra);}
+  .qna-btn.primary:hover{background:var(--terra-dark);}
+  .qna-btn.danger{color:var(--red);border-color:#E2B7A4;}
+  .qna-btn.danger:hover{background:var(--red-soft);}
+  .qna-inline-form{margin-top:10px;background:#FDFBF5;border:1px solid var(--line);border-radius:9px;padding:11px;}
+  .qna-field-label{font-size:11px;font-weight:800;color:var(--terra-dark);margin-bottom:3px;}
+  .qna-input,.qna-textarea,.qna-select{width:100%;font-family:inherit;font-size:13px;
+    border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink);
+    margin-bottom:9px;}
+  .qna-textarea{resize:vertical;min-height:70px;}
+  .qna-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  @media(max-width:500px){.qna-row2{grid-template-columns:1fr;}}
+  .qna-hint{font-size:11px;color:var(--muted);margin:-5px 0 9px;}
+  .qna-msg{font-size:12px;border-radius:7px;padding:7px 10px;margin-bottom:9px;}
+  .qna-msg.error{background:var(--red-soft);color:var(--red);}
+  .qna-msg.success{background:var(--forest-soft);color:var(--forest);}
+
+  /* ===== 모달 (새 질문 / 비번 확인) ===== */
+  .qna-modal-overlay{display:none;position:fixed;inset:0;background:rgba(43,38,34,0.45);
+    z-index:50;align-items:center;justify-content:center;padding:16px;}
+  .qna-modal-overlay.open{display:flex;}
+  .qna-modal{background:var(--paper);border-radius:14px;max-width:440px;width:100%;
+    max-height:90vh;overflow-y:auto;padding:18px 18px 16px;}
+  .qna-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .qna-modal-title{font-size:15px;font-weight:800;color:var(--ink);}
+  .qna-modal-close{font-family:inherit;font-size:18px;background:none;border:none;
+    color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px;}
+  .qna-modal-foot{display:flex;gap:8px;margin-top:4px;}
+  .qna-modal-foot .qna-btn{flex:1;text-align:center;justify-content:center;padding:9px;font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-inner">
+    <div class="school-badge">🏫 삼계중학교 전용</div>
+    <h1>2026 자율형 종합감사 체크리스트</h1>
+    <div class="sub">탭을 눌러 분야별로 점검 · 완료 항목 클릭 시 체크 · 진행 상황 자동 저장</div>
+    <div class="school-info">
+      <span class="info-chip">📍 창원시 마산회원구 내서읍 삼계9길 40</span>
+      <span class="info-chip">교장 <b>황영숙</b> · 교감 <b>구정진</b> · 행정실장 <b>이성제</b></span>
+      <span class="info-chip">21학급 526명</span>
+      <span class="info-chip">🔍 수감: 2023.12.4.~2026.2.28.</span>
+      <span class="archive-wrap">
+        <a class="info-chip info-chip-link" id="archiveToggle" href="javascript:void(0)">📂 자율형 종합감사 자료실 ▾</a>
+        <div class="archive-panel" id="archivePanel">
+          <div class="archive-panel-head">
+            <span>📂 자료실 목록 미리보기</span>
+            <a href="https://drive.google.com/drive/folders/12cit4rXQ75OBBKzQ145GDcVZptwtB6pt?usp=sharing" target="_blank" rel="noopener">새 탭에서 열기 ↗</a>
+          </div>
+          <div class="archive-iframe-box">
+            <iframe id="archiveIframe" src="" loading="lazy" title="자율형 종합감사 자료실 목록"></iframe>
+          </div>
+          <div class="archive-panel-foot">파일을 열려면 새 탭에서 열기를 이용하세요</div>
+        </div>
+      </span>
+    </div>
+    <div class="progress-row">
+      <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+      <div class="pct" id="pctText">0% <small>(0/0)</small></div>
+    </div>
+  </div>
+  <nav class="tabbar" id="tabbar"></nav>
+</header>
+
+<div class="wrap" id="wrap"></div>
+
+<!-- 새 질문 작성 모달 -->
+<div class="qna-modal-overlay" id="qnaNewModal">
+  <div class="qna-modal">
+    <div class="qna-modal-head">
+      <div class="qna-modal-title">✍️ 질문 작성하기</div>
+      <button class="qna-modal-close" data-close="qnaNewModal">✕</button>
+    </div>
+    <div id="qnaNewMsg"></div>
+    <div class="qna-field-label">질문 카테고리</div>
+    <select class="qna-select" id="qnaNewCategory">
+      <option value="제도·일정">제도·일정 (감사 절차, 날짜)</option>
+      <option value="교무·학사">교무·학사 (출결·학적·평가·생활기록부)</option>
+      <option value="행정·회계">행정·회계 (예산·계약·공문)</option>
+      <option value="복무·인사">복무·인사 (휴가·겸직·계약제교원)</option>
+      <option value="확인서·서식">확인서·서식 작성</option>
+      <option value="자료실·시스템">자료실·시스템 이용 문의</option>
+      <option value="기타">기타</option>
+    </select>
+    <div class="qna-field-label">작성자 (이름 또는 소속+이름)</div>
+    <input class="qna-input" id="qnaNewAuthor" placeholder="예: 3학년부 김OO" maxlength="40">
+    <div class="qna-field-label">질문 내용</div>
+    <textarea class="qna-textarea" id="qnaNewQuestion" placeholder="궁금한 점을 자유롭게 적어주세요" maxlength="1000"></textarea>
+    <div class="qna-field-label">비밀번호 (4자리 이상, 수정·삭제 시 필요)</div>
+    <input class="qna-input" id="qnaNewPw" type="password" placeholder="숫자/문자 4자리 이상" maxlength="20">
+    <div class="qna-hint">비밀번호는 본인 확인용입니다. 잊지 않게 메모해두세요.</div>
+    <div class="qna-modal-foot">
+      <button class="qna-btn" data-close="qnaNewModal">취소</button>
+      <button class="qna-btn primary" id="qnaNewSubmit">등록하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 작성자 본인 확인 모달 (수정/삭제) -->
+<div class="qna-modal-overlay" id="qnaAuthModal">
+  <div class="qna-modal">
+    <div class="qna-modal-head">
+      <div class="qna-modal-title" id="qnaAuthTitle">🔒 비밀번호 확인</div>
+      <button class="qna-modal-close" data-close="qnaAuthModal">✕</button>
+    </div>
+    <div id="qnaAuthMsg"></div>
+    <div id="qnaAuthEditArea" style="display:none">
+      <div class="qna-field-label">질문 내용 수정</div>
+      <textarea class="qna-textarea" id="qnaAuthEditText" maxlength="1000"></textarea>
+    </div>
+    <div class="qna-field-label">비밀번호</div>
+    <input class="qna-input" id="qnaAuthPw" type="password" placeholder="작성 시 입력한 비밀번호" maxlength="20">
+    <div class="qna-modal-foot">
+      <button class="qna-btn" data-close="qnaAuthModal">취소</button>
+      <button class="qna-btn primary" id="qnaAuthSubmit">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 답변 모달 -->
+<div class="qna-modal-overlay" id="qnaAdminModal">
+  <div class="qna-modal">
+    <div class="qna-modal-head">
+      <div class="qna-modal-title">🛡️ 관리자 답변 작성</div>
+      <button class="qna-modal-close" data-close="qnaAdminModal">✕</button>
+    </div>
+    <div id="qnaAdminMsg"></div>
+    <div class="qna-field-label">관리자 비밀번호</div>
+    <input class="qna-input" id="qnaAdminPw" type="password" placeholder="관리자 비밀번호" maxlength="20">
+    <div class="qna-field-label">답변 내용</div>
+    <textarea class="qna-textarea" id="qnaAdminAnswer" placeholder="답변을 입력하세요" maxlength="2000" style="min-height:110px"></textarea>
+    <div class="qna-modal-foot">
+      <button class="qna-btn" data-close="qnaAdminModal">취소</button>
+      <button class="qna-btn primary" id="qnaAdminSubmit">답변 등록</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const EVAL_CASES_HTML = `
+<div style="margin:12px 0 4px">
+  <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin-bottom:8px;">
+    📌 평가 지적 4대 유형 — 사례로 이해하기
+  </div>
+  <div class="eval-grid">
+
+    <div class="eval-card">
+      <div class="eval-card-head">
+        <span class="eval-card-icon">❌</span>
+        <div>
+          <div class="eval-card-title">① 채점 오류 (1·4번 불일치)</div>
+        </div>
+      </div>
+      <div class="eval-card-body">
+        <div class="eval-wrong">
+          <div class="eval-label">🚫 지적 사례</div>
+          1번 문항 채점지에는 3점인데<br>4번(성적 산출표)에는 5점으로 기재<br>→ 합산 점수 오류 발생
+        </div>
+        <div class="eval-right">
+          <div class="eval-label">✅ 점검 방법</div>
+          채점지(①) → 채점 결과 집계표(④)<br>학생별 1:1 대조 점검
+        </div>
+        <div class="eval-note">출제 단계 답안지와 최종 NEIS 입력값까지 4단계 추적 필요</div>
+        <span class="eval-stat">★ 전 학교 발생</span>
+      </div>
+    </div>
+
+    <div class="eval-card">
+      <div class="eval-card-head">
+        <span class="eval-card-icon">📐</span>
+        <div>
+          <div class="eval-card-title">② 개별 점수 확대 적용</div>
+        </div>
+      </div>
+      <div class="eval-card-body">
+        <div class="eval-wrong">
+          <div class="eval-label">🚫 지적 사례</div>
+          A학생 답: "환경오염이 심해진다"<br>기준 배점: 3점<br>→ 교사가 임의로 4점 부여
+        </div>
+        <div class="eval-right">
+          <div class="eval-label">✅ 점검 방법</div>
+          채점기준표와 실제 채점지 대조<br>동일 답안인데 점수 다른 경우 확인
+        </div>
+        <div class="eval-note">채점기준표 없이 교사 재량으로 점수 조정한 경우 모두 해당</div>
+        <span class="eval-stat">★ 전 학교 발생</span>
+      </div>
+    </div>
+
+    <div class="eval-card">
+      <div class="eval-card-head">
+        <span class="eval-card-icon">⚖️</span>
+        <div>
+          <div class="eval-card-title">③ 채점기준표 배점 불일치</div>
+        </div>
+      </div>
+      <div class="eval-card-body">
+        <div class="eval-wrong">
+          <div class="eval-label">🚫 지적 사례</div>
+          채점기준표: 서술형 3번 = 5점<br>실제 채점: 해당 문항 7점 부여<br>→ 전체 배점 합계도 틀어짐
+        </div>
+        <div class="eval-right">
+          <div class="eval-label">✅ 점검 방법</div>
+          학업성적관리위원회 심의 채점기준표<br>vs 실제 채점된 점수 문항별 대조
+        </div>
+        <div class="eval-note">수행평가 세부 영역별 채점기준표 미작성 자체도 별도 지적 대상</div>
+        <span class="eval-stat">★ 전 학교 발생</span>
+      </div>
+    </div>
+
+    <div class="eval-card">
+      <div class="eval-card-head">
+        <span class="eval-card-icon">💻</span>
+        <div>
+          <div class="eval-card-title">④ NEIS 총점 입력 오류</div>
+        </div>
+      </div>
+      <div class="eval-card-body">
+        <div class="eval-wrong">
+          <div class="eval-label">🚫 지적 사례</div>
+          지필+수행 합계: 실제 83점<br>NEIS 입력: 38점<br>(숫자 순서 오기 등 단순 입력실수)
+        </div>
+        <div class="eval-right">
+          <div class="eval-label">✅ 점검 방법</div>
+          성적 산출 결과표 합계<br>vs NEIS 입력값 전수 대조 출력
+        </div>
+        <div class="eval-note">확인서 3건만 제출된 학교는 평가 집중 점검 시 추가 적발 가능성 높음</div>
+        <span class="eval-stat">★ 전 학교 발생</span>
+      </div>
+    </div>
+
+  </div>
+  <div style="background:#FFF8E1;border:1px solid #F0C844;border-radius:8px;padding:9px 12px;margin-top:8px;font-size:12px;color:#7A5800;line-height:1.6;">
+    💡 <b>점검 전략:</b> 교과별 1~2개 문항을 표본 추출 → 채점지 원본 → 집계표 → NEIS 입력값까지 4단계 추적.
+    수행평가는 채점기준표 존재 여부부터 확인. 부정행위 처리 시 학생 진술서+학부모 통보 증빙 필수.
+  </div>
+</div>`;
+
+const DATA = [
+{
+  id:"samgye", label:"삼계중 현황", icon:"🏫",
+  extraHTML:`
+  <div class="sched-card">
+    <h3>📅 감사 일정 (삼계중학교)</h3>
+    <table class="sched-table">
+      <tr><th>구분</th><th>기간</th><th>장소</th><th>담당</th></tr>
+      <tr><td><span class="phase-badge phase-1">1차 자기점검</span></td>
+        <td>2026.05.11.~07.06. (47일)</td><td>교무실·행정실</td><td>전 교직원</td></tr>
+      <tr><td><span class="phase-badge phase-2">2차 교차점검</span></td>
+        <td>2026.07.07.~07.20. (14일)</td><td>학년실</td><td>내부감사관</td></tr>
+      <tr><td><span class="phase-badge phase-3">3차 외부점검</span></td>
+        <td>2026.08.19.~08.21. (3일)</td><td>온빛솔</td><td>외부감사관+도감사관</td></tr>
+    </table>
+    <div class="today-marker">📌 현재 <b>1차 자기점검 기간</b> 진행 중 (2026.06.18 기준) · 잔여 약 18일</div>
+  </div>
+  <div class="sched-card" style="margin-top:8px">
+    <h3>👥 감사반 구성</h3>
+    <table class="sched-table">
+      <tr><th>역할</th><th>성명·소속</th><th>분야</th></tr>
+      <tr><td><b>감사반장</b></td><td>황영숙 교장</td><td>전체</td></tr>
+      <tr><td>외부감사관</td><td>김경수 교감 (김해율하고)</td><td>교무·학사</td></tr>
+      <tr><td>외부감사관</td><td>정민석 행정7급 (옥종고)</td><td>행정·회계</td></tr>
+      <tr><td>외부전문가</td><td>이창우 시설6급 (창원교육지원청)</td><td>시설</td></tr>
+      <tr><td>내부감사관</td><td>구정진(교감) 이성제(행정실장)</td><td>총괄</td></tr>
+      <tr><td>내부감사관</td><td>정효성·신수호·박선정·김민수</td><td>교무·학사</td></tr>
+      <tr><td>내부감사관</td><td>이혜숙·이선주·천승진·도진경</td><td>교무·학사</td></tr>
+      <tr><td>내부감사관</td><td>임수진 주무관</td><td>행정·회계</td></tr>
+    </table>
+  </div>
+  <div class="sched-card" style="margin-top:8px">
+    <h3>🎓 컨설팅 일정</h3>
+    <table class="sched-table">
+      <tr><th>단계</th><th>일시</th><th>장소</th><th>컨설턴트</th><th>내용</th></tr>
+      <tr><td>계획수립</td><td>04.17.(금) ✅완료</td><td>행정실</td><td>정민석</td><td>감사 계획 수립</td></tr>
+      <tr><td>감사실시</td><td>06.19.(금) ⬤예정</td><td>2층 역사관</td><td>김경수 교감</td><td>확인서 작성법</td></tr>
+      <tr><td>결과처리</td><td>08.19.(수)</td><td>감사장</td><td>정민석</td><td>감사 결과처리</td></tr>
+    </table>
+  </div>`,
+  sections:[
+    {title:"삼계중 핵심 준비 현황 점검", items:[
+      {text:"3차 감사장 '온빛솔' 준비 계획 수립 — 컴퓨터 7대, 프린터 1대, 전화기 1대 (08.13.~08.18. 중)", tag:"준비"},
+      {text:"외부감사관 위촉 공문이 소속기관(김해율하고·옥종고·창원교육지원청)에 발송되었는가?", tag:"필수"},
+      {text:"06.19.(금) 컨설팅 — 2층 역사관 장소 및 김경수 교감과 일정 조율 완료", tag:"D-1일"},
+      {text:"확인서·자율점검표 D-10 — 2026.08.09.까지 업무메일 발송 계획 수립", tag:"D-10"},
+      {text:"감사결과 보고(08.28.) 일정을 이성제 행정실장이 인지하고 준비 중인가?"}
+    ]},
+    {title:"예산 집행 계획", items:[
+      {text:"외부감사관 수당 — 100,000원×2명×3일 = 600,000원 예산 확보"},
+      {text:"외부전문가 수당 — 200,000원×3명×1일 = 600,000원 예산 확보"},
+      {text:"컨설팅수당 — 50,000원×2명×3회 = 300,000원 예산 확보"},
+      {text:"총 1,500,000원 + 여비(공무원 여비규정 적용) 개인별 지급 계획"},
+      {text:"08.24. 수당·여비 지급 — 임수진 주무관 처리 준비"}
+    ]},
+    {title:"중대 비리 유의 사항 인지", items:[
+      {text:"시험문제지 부정 유출, 부교재 부당 선정·강매 등 중대 비리 발생 시 즉시 학교장 보고 체계 구축", tag:"중대비리"},
+      {text:"성적 조작, 학교생활기록부 조작, 공금 횡령, 학교폭력 은폐 발견 시 도교육청(감사관) 감사 요청 절차 인지", tag:"중대비리"},
+      {text:"고의적 은폐·축소 시 도교육청 실지감사 및 가중처벌 됨을 전 교직원이 인지"}
+    ]}
+  ]
+},
+{
+  id:"operation", label:"감사 운영", icon:"🏛️",
+  intro:"경상남도교육청 감사관 <b>2026 자율형 종합감사 운영</b> 자료를 기반으로 제도 개념, 변경 사항, 감사 절차, 외부감사관 역할 등을 정리했습니다.",
+  extraHTML:`
+  <div style="margin:12px 0 6px">
+
+    <!-- 자율형 종합감사 개념 -->
+    <div style="background:#F3EFFC;border:1.5px solid #C4B0EE;border-radius:12px;padding:13px 16px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:800;color:#5B3EB5;margin-bottom:8px">📖 자율형 종합감사란?</div>
+      <div style="font-size:13.5px;line-height:1.75;color:var(--ink)">
+        학교에서 <b>각종 비리를 예방</b>하기 위해 스스로 감사반을 편성하여 <b style="color:#5B3EB5">자율적으로 감사</b>하고, 그 결과에 대하여 <b style="color:#5B3EB5">시정·개선</b>하는 제도
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px;font-size:12.5px">
+        <div style="background:#fff;border-radius:8px;padding:8px 11px;border:1px solid #C4B0EE">
+          <div style="font-weight:800;color:#5B3EB5;margin-bottom:3px">감사 주기</div>
+          2025년부터 적용 · 3년 주기(학년도 기준)
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px 11px;border:1px solid #C4B0EE">
+          <div style="font-weight:800;color:#5B3EB5;margin-bottom:3px">감사 기간</div>
+          1차 14일 이상 · 2차 7일 이상 · 3차 3일
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px 11px;border:1px solid #C4B0EE">
+          <div style="font-weight:800;color:#5B3EB5;margin-bottom:3px">감사 대상</div>
+          공립 유·초·중·고·특수 (신설·특성화·각종·사립 제외)
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:8px 11px;border:1px solid #C4B0EE">
+          <div style="font-weight:800;color:#5B3EB5;margin-bottom:3px">점검 항목</div>
+          교무·학사 52개/174개 · 행정·회계 31개/98개 · 계 83개/272개
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026 변경 사항 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:12px 0 7px">🔄 2026년도 변경 사항 (2025 → 2026)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px">
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#4A4A4A;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">📄 자료 제출 기한</div>
+        <div style="padding:9px 12px;font-size:12.5px">
+          <div style="color:var(--muted);text-decoration:line-through;font-size:11.5px">2025: 3차 점검 5일 전까지</div>
+          <div style="color:var(--forest);font-weight:800;margin-top:3px">✅ 2026: 3차 점검 <b>10일 전</b>까지</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:3px">삼계중 기준 08.09.까지 송부</div>
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#4A4A4A;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">👤 외부전문가 위촉</div>
+        <div style="padding:9px 12px;font-size:12.5px">
+          <div style="color:var(--muted);text-decoration:line-through;font-size:11.5px">2025: 희망학교 배정 · 학교장 위촉</div>
+          <div style="color:var(--forest);font-weight:800;margin-top:3px">✅ 2026: 희망·지정 배정 · <b>도교육청 위촉</b></div>
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#4A4A4A;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">⭐ 감사관 평가 (신설)</div>
+        <div style="padding:9px 12px;font-size:12.5px">
+          <div style="color:var(--muted);text-decoration:line-through;font-size:11.5px">2025: 평가 없음</div>
+          <div style="color:var(--forest);font-weight:800;margin-top:3px">✅ 2026: 수감학교 <b>교직원이 평가</b></div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:3px">3차 마지막 날부터 10일간 온라인 설문</div>
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#4A4A4A;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">📁 추가 준비 서류 (신설)</div>
+        <div style="padding:9px 12px;font-size:12.5px">
+          <div style="color:var(--forest);font-weight:700">교무·학사: 계약제교원 채용 서류</div>
+          <div style="color:var(--forest);font-weight:700;margin-top:3px">일반행정·학교회계: 공사계약서류</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 감사 절차 3단계 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:12px 0 7px">🔁 감사 절차 3단계</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+      <div style="background:#F3EFFC;border:1.5px solid #C4B0EE;border-radius:10px;padding:10px 12px;font-size:12.5px">
+        <div style="font-weight:800;color:#5B3EB5;font-size:13px;margin-bottom:6px">① 사전 준비</div>
+        <div style="color:var(--ink);line-height:1.7">
+          · 감사 계획 수립<br>· 감사반 편성<br>· 점검 항목·점검표 준비<br>· <b>사전 연수 및 컨설팅</b><br>· 외부전문가 활동(연중)
+        </div>
+        <div style="background:#fff;border-radius:6px;padding:5px 8px;margin-top:7px;font-size:11.5px;color:#5B3EB5;font-weight:700">현장지원 컨설팅 1회 이상 필수</div>
+      </div>
+      <div style="background:#FDECEA;border:1.5px solid #F0B0A8;border-radius:10px;padding:10px 12px;font-size:12.5px">
+        <div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:6px">② 감사 실시</div>
+        <div style="color:var(--ink);line-height:1.7">
+          · 1·2차 자기·교차점검<br>· <b>확인서 작성</b><br>· 감사장 준비<br>· 3차 외부점검<br>· 감사 마감회의
+        </div>
+        <div style="background:#fff;border-radius:6px;padding:5px 8px;margin-top:7px;font-size:11.5px;color:var(--red);font-weight:700">삼계중 3차: 08.19.~08.21.</div>
+      </div>
+      <div style="background:var(--forest-soft);border:1.5px solid #BCD3C0;border-radius:10px;padding:10px 12px;font-size:12.5px">
+        <div style="font-weight:800;color:var(--forest);font-size:13px;margin-bottom:6px">③ 사후 처리</div>
+        <div style="color:var(--ink);line-height:1.7">
+          · 처분심의회 개최<br>· 감사 사후 처리<br>· 결과 보고<br>· 이행결과 제출<br>· 환류·연수 실시
+        </div>
+        <div style="background:#fff;border-radius:6px;padding:5px 8px;margin-top:7px;font-size:11.5px;color:var(--forest);font-weight:700">삼계중 결과 보고: 08.28.</div>
+      </div>
+    </div>
+
+    <!-- 외부감사관 역할 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:12px 0 7px">👁️ 외부감사관의 역할 (김경수 교감 / 정민석 행정7급)</div>
+    <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:10px;font-size:12.5px;line-height:1.8">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+        <div style="background:#F3EFFC;border-radius:7px;padding:7px 10px">🔍 감사 전 자율형 종합감사 전반에 대한 <b>컨설팅 실시</b></div>
+        <div style="background:#F3EFFC;border-radius:7px;padding:7px 10px">✅ 학교 자체 1·2차 점검 결과의 <b>적정성 확인</b></div>
+        <div style="background:#F3EFFC;border-radius:7px;padding:7px 10px">💬 지적 위주가 아닌 <b>업무 개선 방안 제시</b> (지도·조언 중심)</div>
+        <div style="background:#F3EFFC;border-radius:7px;padding:7px 10px">🛡️ 감사 사각지대 해소 및 <b>중대 비리 최종 스크리닝</b></div>
+        <div style="background:#F3EFFC;border-radius:7px;padding:7px 10px;grid-column:span 2">📝 최종 <b>확인서</b> 및 <b>현지조치통보서</b> 작성</div>
+      </div>
+    </div>
+
+    <!-- 외부감사관 업무 흐름도 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:12px 0 7px">🔄 외부감사관 업무 흐름도 (삼계중 기준)</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;font-size:12px">
+      <div style="background:#5B3EB5;color:#fff;border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.8;margin-bottom:2px">① 완료</div><b>계획 수립</b></div>
+      <div style="background:#5B3EB5;color:#fff;border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.8;margin-bottom:2px">② 완료</div><b>외부감사관 위촉</b></div>
+      <div style="background:#8B6FCC;color:#fff;border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.8;margin-bottom:2px">③ 예정 06.19.</div><b>컨설팅 실시</b></div>
+      <div style="background:#A890D8;color:#fff;border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.8;margin-bottom:2px">④ D-15(08.04.)</div><b>권한 부여·사전검토</b></div>
+      <div style="background:#C4B0EE;color:var(--ink);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.7;margin-bottom:2px">⑤ D-10(08.09.)</div><b>확인서·점검표 수신</b></div>
+      <div style="background:#C4B0EE;color:var(--ink);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.7;margin-bottom:2px">⑥ 08.19.~08.21.</div><b>3차 점검 실시</b></div>
+      <div style="background:#C4B0EE;color:var(--ink);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.7;margin-bottom:2px">⑦ 08.21. 오전</div><b>감사 정리</b></div>
+      <div style="background:#C4B0EE;color:var(--ink);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:10px;opacity:0.7;margin-bottom:2px">⑧ 08.21. 오후</div><b>기타 정리</b></div>
+    </div>
+
+    <!-- 3차 점검 1·2일차 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:12px 0 7px">📋 3차 점검 실시 내용</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;font-size:12.5px">
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#5B3EB5;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">감사 활동 (1·2일차)</div>
+        <div style="padding:9px 12px;line-height:1.8">· 학교장 상견례<br>· 송부받은 확인서 내용 및 관련자 확인<br>· 자율점검표와 비교하여 누락된 확인서 확인 및 추가 작성</div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#5B3EB5;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">기타 자료 작성</div>
+        <div style="padding:9px 12px;line-height:1.8">· 등록부 작성<br>· 서약서 작성<br>· 감사카드 작성<br><br></div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+        <div style="background:#5B3EB5;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">2일차 마감 업무</div>
+        <div style="padding:9px 12px;line-height:1.8">· 점검 완료된 확인서 일체를 도감사관에게 업무메일 송부<br><br><br></div>
+      </div>
+    </div>
+
+    <!-- 3일차 감사 정리 -->
+    <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:10px;font-size:12.5px">
+      <div style="font-weight:800;color:#5B3EB5;margin-bottom:8px">3일차 — 지적 사항 분류 및 마감회의</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#F3EFFC;border-radius:8px;padding:9px 11px">
+          <div style="font-weight:800;color:#5B3EB5;margin-bottom:4px">① 확인서 징구건</div>
+          확인서 최종 작성 → 처분심의로 연결
+        </div>
+        <div style="background:#E4F2E9;border-radius:8px;padding:9px 11px">
+          <div style="font-weight:800;color:var(--forest);margin-bottom:4px">② 현지조치건</div>
+          현지조치통보서 작성 → 도감사관에게 제출
+        </div>
+      </div>
+      <div style="background:#FFF3CD;border-radius:8px;padding:8px 11px;margin-top:7px;font-size:12px;color:#7A5800">
+        🕐 <b>마감회의</b>: 08.21. 학교 측에 최종 지적 내용 알림 및 회의 준비
+      </div>
+    </div>
+
+    <!-- 감사결과 평가 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:12px 0 7px">📊 감사결과 평가 (상호 평가)</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <tr style="background:var(--blue);color:#fff">
+        <th style="padding:7px 10px;text-align:left">구분</th>
+        <th style="padding:7px 10px;text-align:left">시기</th>
+        <th style="padding:7px 10px;text-align:left">내용</th>
+        <th style="padding:7px 10px;text-align:left">방법</th>
+      </tr>
+      <tr style="border-bottom:1px solid var(--line-soft)">
+        <td style="padding:7px 10px"><b>외부감사관의 학교평가</b></td>
+        <td style="padding:7px 10px">3차 점검일부터 3일간<br><small style="color:#888">(08.19.~08.21.)</small></td>
+        <td style="padding:7px 10px">학교별 감사 추진 과정·실적 (정량+정성)</td>
+        <td style="padding:7px 10px">온라인 설문 (QR코드)</td>
+      </tr>
+      <tr>
+        <td style="padding:7px 10px"><b>교직원의 외부감사관 평가</b></td>
+        <td style="padding:7px 10px">3차 마지막 날부터 10일간<br><small style="color:#888">(08.21.~08.31.)</small></td>
+        <td style="padding:7px 10px">자율형 종합감사 이해 및 컨설팅</td>
+        <td style="padding:7px 10px">온라인 설문조사</td>
+      </tr>
+    </table>
+  </div>`,
+  sections:[
+    {title:"외부감사관 위촉 절차 점검", items:[
+      {text:"도교육청이 외부감사관을 배정하여 삼계중학교에 알림 — 배정 확인 완료", tag:"완료"},
+      {text:"배정된 외부감사관(김경수 교감, 정민석 행정7급)과 일정 등 소통 및 위촉 가능 여부 최종 확인 완료"},
+      {text:"위촉 공문을 소속기관(김해율하고, 옥종고)에 발송 완료", tag:"완료"},
+      {text:"외부감사관이 3차 점검 수행 불가 시 즉시 삼계중과 소통하여 인력풀 내 재위촉 절차 인지"}
+    ]},
+    {title:"사전 준비 — 권한 부여·사전 검토 점검", items:[
+      {text:"3차 점검일 기준 D-15(2026.08.04.)까지 도교육청에서 K-에듀파인 문서 열람 권한 부여 예정", tag:"D-15"},
+      {text:"권한 부여 직후 외부감사관의 사전 검토 시작 — 김경수 교감, 정민석 행정7급에게 안내", note:"복무관련 권한은 개인정보보호 이유로 부여 제외"},
+      {text:"K-에듀파인 문서등록대장 검색: 소속 부서 지우고 → 감사열람조직을 '삼계중학교'로 선택", note:"조회옵션 펼치기에서 설정"}
+    ]},
+    {title:"3차 점검 실시 준비 점검", items:[
+      {text:"3차 점검 D-10(08.09.)까지 확인서·확인서 일람표·자율점검표를 외부감사관·도감사관에게 업무메일 송부", tag:"D-10"},
+      {text:"감사장(온빛솔) 준비 — 컴퓨터 7대, 프린터 1대, 전화기 1대, 감사서류, 감사 수감표 작성 (08.13.~08.18.)"},
+      {text:"3차 1·2일차 — 등록부·서약서·감사카드 작성 준비 / 2일차 마감에 완료된 확인서 일체를 도감사관에게 업무메일 송부"},
+      {text:"3차 3일차 — 지적 사항을 도감사관과 협의하여 ①확인서 징구건 / ②현지조치건으로 분류"},
+      {text:"마감회의 — 08.21. 학교 측에 최종 지적 내용 알림 및 회의 준비 / 관련자 지적사항 사전 고지 여부 반드시 확인"}
+    ]},
+    {title:"기타 안내 사항 인지", items:[
+      {text:"중대 비리(시험문제 유출·성적 조작·공금 횡령 등) 발견 시 도교육청 감사관에 공문으로 즉시 요청 — 고의적 은폐·축소 시 실지감사 및 가중처벌", tag:"중대비리"},
+      {text:"자율점검표 외부감사관 서명란에 3차 점검 후 빠짐없이 서명 확인"},
+      {text:"여비 정산 서류 일체를 수감학교 삼계중 행정실(임수진 주무관)에 최종 제출 — 소속기관 제출 아님", note:"08.24. 처리"},
+      {text:"외부감사관의 학교평가(3차 점검일부터 3일간) QR코드 리플렛 감사 시 필수 지참"},
+      {text:"교직원의 외부감사관 평가(3차 마지막 날부터 10일간) 온라인 설문 참여 안내 — 구정진 교감 총괄"}
+    ]}
+  ]
+},
+{
+  id:"plan", label:"일정 준비", icon:"🗓️",
+  intro:"삼계중학교 <b>수감 기간: 2023.12.4. ~ 2026.2.28.</b> · 1차 점검 현재 진행 중 (~07.06.). 2026학년도 달라진 점을 반드시 확인하세요.",
+  sections:[
+    {title:"제도 이해 · 수감 기간", items:[
+      {text:"삼계중 수감 기간(2023.12.4.~2026.2.28.)을 전 내부감사관이 명확히 인지", note:"23학년도가 포함 → 당시 법령·지침 별도 확인 필수", tag:"필수"},
+      {text:"23학년도 포함 → 호봉·기간제·학폭·교권 등 법 개정 전후 항목 별도 확인"},
+      {text:"점검 3단계 구조 — 1차 47일(~07.06.) / 2차 14일(07.07.~07.20.) / 3차 3일(08.19.~08.21.)"}
+    ]},
+    {title:"2026년도 달라진 점", items:[
+      {text:"자료 제출 변경 — 3차 점검 10일 전(08.09.)까지 확인서·자율점검표 송부", note:"이전 5일 전 → 검토 기간 확대", tag:"변경"},
+      {text:"외부전문가 위촉 방식 변경 — 도교육청 일괄 위촉·배정", tag:"변경"},
+      {text:"외부감사관 평가(신설) — 운영학교가 외부감사관 활동 '과정 평가' 실시", tag:"신설"},
+      {text:"중점 준비 서류 추가 — 계약제(기간제) 교원 채용 서류 + 공사 계약 서류", tag:"중점"}
+    ]},
+    {title:"남은 주요 일정", items:[
+      {text:"【진행중】1차 자기점검(자율점검표) — 전 교직원 (~07.06.)", tag:"진행중"},
+      {text:"【예정】2차 교차점검 — 내부감사관 (07.07.~07.20.)"},
+      {text:"【예정】확인서 내부결재 및 도감사관·외부감사관 업무메일 송부 (07.21.~07.22.)"},
+      {text:"【예정】D-10 제출 마감 (08.09.) — 확인서+자율점검표 전송 완료", tag:"D-10"},
+      {text:"【예정】감사장 준비 (08.13.~08.18.) — 컴퓨터 7대, 프린터, 수감표 등"},
+      {text:"【예정】3차 외부감사 (08.19.~08.21.) — 온빛솔"},
+      {text:"【예정】마감회의 (08.21.) + 감사만족도 조사 (08.24.~08.28.)"},
+      {text:"【예정】감사결과 보고 (08.28.) — 이성제 행정실장"}
+    ]},
+    {title:"자료 위치 안내", items:[
+      {text:"도교육청 감사관 홈페이지 — 자율 종합감사 매뉴얼 위치 확인"},
+      {text:"K-에듀파인 → 업무지원 → 일반게시판 → '자율형 종합감사 업무지원'", note:"확인서 링크 파일·표준 서식 탑재"},
+      {text:"확인서 표준 서식 — 운영 매뉴얼 39쪽 기준"}
+    ]}
+  ]
+},
+{
+  id:"acad1", label:"교무·학사 I", icon:"📘",
+  intro:"<b>학교규칙 / 출결 / 학적 관리</b> 점검 영역. 자율점검표 2-1(학교규칙), 2-2(출결관리), 2-3-2(중등 학적관리) 해당. NEIS 입력치와 증빙서류의 불일치가 가장 빈번한 지적입니다.",
+  sections:[
+    {title:"2-1 학교규칙 제·개정 (매뉴얼 p.26)", items:[
+      {text:"학칙 개정 시 교원·학부모·학생 의견 수렴 절차를 거치고 결과를 반영하였는가?", ref:"초·중등교육법 시행령 제9조"},
+      {text:"학교운영위원회 심의를 거친 후 개정 학칙을 공포·시행하였는가?", ref:"초·중등교육법 제32조"},
+      {text:"학업중단 예방·교외체험학습 지침 등 최신 법령 변경 사항을 학칙에 적시 반영하였는가?"}
+    ]},
+    {title:"2-2 출결 관리 (매뉴얼 p.27~29)", items:[
+      {text:"질병결석 시 5일 이내 증빙(진단서 등)을 첨부한 결석계를 확인하고, 결재 승인을 득하였는가?", ref:"학교생활기록 작성 및 관리지침"},
+      {text:"외갓집 방문·부모 동행 여행 등 미인정 사유를 '기타 결석'으로 부적절 처리하지 않았는가?", tag:"오류주의"},
+      {text:"NEIS 입력 날짜가 결석계·증빙 서류상 날짜와 일치하는지 전수 점검하였는가?", tag:"대조확인"},
+      {text:"교외체험학습 — 실시 전 신청서·승인, 실시 후 7일 이내 보고서+증빙(승차권 등) 대조 확인", ref:"초·중등교육법 시행령 제48조"},
+      {text:"보고서 확인 없이 출석인정결석 처리하거나 사후 증빙 없는 경우를 묵인하지 않았는가?"}
+    ]},
+    {title:"2-3-2 중등 학적 관리 (매뉴얼 p.30~32)", items:[
+      {text:"인적사항 변경 시 증빙서류 첨부 및 정정대장을 통한 정정 — 학생 정원·현원 관리 적정", ref:"학교생활기록부 기재요령"},
+      {text:"전입·전출 학생 처리 — 수업일수·출결일수 합산, 성적처리 및 창의적 체험활동 시수 산정 적정"},
+      {text:"귀국학생(중도입국·다문화·탈북 포함) 출·입국 시 학적 처리 절차 및 증빙서류 구비 적정", ref:"초·중등교육법 시행령 제19조"},
+      {text:"의무교육관리위원회 구성 — 위원장(학교장) + 외부전문가 1명 이상 포함 5~7인 구성·운영", note:"외부 전문가 누락은 심의 객관성 저해", ref:"초·중등교육법 시행령 제25조의2"},
+      {text:"진급·졸업 — 출석일수 2/3 이상 준수, 진급·졸업평가위원회 운영 적정"},
+      {text:"미인정 결석 학생에 대한 가정방문·출석 독촉 절차 이행 기록이 관리되고 있는가?"}
+    ]}
+  ]
+},
+{
+  id:"acad2", label:"교무·학사 II", icon:"📊",
+  intro:"<b>학생 평가·생활기록부 기재</b> 점검 영역. 자율점검표 3-2-2(중등 학생평가 9항목), 2-4-2/2-4-3(중등 학교생활기록부) 해당. <b>채점 오류는 모든 학교에서 발생</b>하는 단골 지적입니다.",
+  extraHTML: null,
+  sections:[
+    {title:"3-2-2 중등 학생평가 — 관리위원회·보안 (매뉴얼 p.46~48)", items:[
+      {text:"[항목1] 학업성적관리위원회 구성 및 운영 절차 준수 / 학업성적관리규정 제·개정 적정", ref:"학업성적관리 시행지침"},
+      {text:"[항목2] 학생 개개인의 교과별 성취기준·평가기준에 따른 성취도와 학습 수행과정을 평가하는 방법 적용 / 고사원안·문항정보표의 정정·인정답안 절차 준수"},
+      {text:"[항목3] 평가계획 명시 내용 준수 및 학생·학부모 사전 예고 / 학년(교과)협의회에서 정하는 내용 준수"},
+      {text:"[항목4] 평가 단계별 보안점검 준수", note:"출제: 보안 강화를 위한 교직원 자녀 재학 현황 파악 및 출제·인쇄 등 평가 업무 조정 / 인쇄: 전자기기 소지 금지·CCTV 설치 / 시행: 답안지 매수 확인 / 채점: 채점기간 중 학생 통제"},
+      {text:"[항목5] 평가관리실 설치(이중잠금장치, CCTV, 출입대장 등) 및 운영 절차 준수"}
+    ]},
+    {title:"3-2-2 중등 학생평가 — 출제·채점 (매뉴얼 p.46~48)", items:[
+      {text:"[항목6] 공교육정상화법 — 학교교육과정 범위·수준을 벗어난 내용 출제·평가 금지 / 선행학습 예방 연수 연 1회 이상 실시"},
+      {text:"[항목7] 평가 문항 출제 지침 준수", note:"출제오류(모두 정답·정답 없음) / 기출문제 반복 출제·참고서 전재 금지 / 서술형·수행평가 비율 준수 / 평가자료 부정 유출·성적 조작 금지"},
+      {text:"[항목8] 평가 결과 채점 절차 준수", tag:"★ 단골", note:"학생별 채점 오류 / 결시생 인정점 부여 / NEIS 입력 오류 / 수행평가 기초자료 보관 / 부정행위자 처리 절차"},
+      {text:"[항목9] 평가 관련 사안 발생 시 처리 절차 준수 — 교과협의회→학업성적관리위원회→학교장 결재→시행"}
+    ]},
+    {title:"2-4-2 중등 학교생활기록부 작성 (매뉴얼 p.34~36)", items:[
+      {text:"인적·학적 사항 변경 시 증빙서류 첨부 및 정정대장 작성 절차 준수"},
+      {text:"창의적 체험활동 기재 — 학교교육계획 포함 활동만 입력 / 봉사활동 시간 1일 8시간 이내 / 결석생 단체봉사 시수 제외", ref:"학교생활기록부 기재요령"},
+      {text:"교과학습 발달상황 — 공인어학시험·발명특허·교내외 수상실적 등 기재 불가 항목 포함 여부 확인"},
+      {text:"(중) 자유학기 활동사항 — 영역별 모든 이수 학생 특기사항 기재 / 담당교사 수시 관찰 내용 문장 입력"},
+      {text:"행동특성 및 종합의견 — 학생이 작성·제출 지시 금지 / 누가기록 기반으로 담임교사가 직접 문장 입력"},
+      {text:"봉사활동을 결석한 날에 한 것으로 처리한 사례가 없는가?"}
+    ]},
+    {title:"2-4-3 중등 학교생활기록부 정정·관리 (매뉴얼 p.37)", items:[
+      {text:"학생부 연간 교사 연수(2시간 이상), 교차 점검(3회 이상) 실시 여부 확인"},
+      {text:"학년 종료 후 정정 시 '객관적 증빙 → 학업성적관리위 심의 → 4단 결재' 준수", tag:"전결금지", note:"4단 결재 = 담당→부장→교감→교장 (전결·대결 절대 불가)"},
+      {text:"미인정 장기결석(연속 7일 이상) 특기사항 입력 / 질병 장기결석·기타결석(1일도) 사유 기재", tag:"누락방지"},
+      {text:"정정대장 학년도 단위 작성·관리(학년말 출력 후 관련 증빙서류와 함께 준영구 보존)"}
+    ]}
+  ]
+},
+{
+  id:"acad3", label:"교무·학사 III", icon:"📒",
+  intro:"<b>교내대회·방과후·복무·겸직</b> 점검 영역. 자율점검표 3-3(교내대회), 방과후, 4-1(복무), 4-2(계약제교원) 해당. 수당 중복 지급 및 겸직 관련 내부 고발이 증가 추세입니다.",
+  sections:[
+    {title:"3-3 교내대회 운영 및 수상경력 관리 (매뉴얼 p.49)", items:[
+      {text:"학년 초 학교교육계획서에 교내 대회 실시 계획(시기·수상 비율)을 사전 기재하였는가?"},
+      {text:"실제 수상 인원을 참가 인원의 20% 이내 권장 비율로 선정하였는가?"},
+      {text:"중3 고입 내신성적 산출·전형 서류·출결 마감을 지침에 맞게 처리하였는가?"}
+    ]},
+    {title:"방과후학교", items:[
+      {text:"연간 운영 만족도 조사(학생·학부모) 실시 및 기록 보존"},
+      {text:"방과후학교 연간 운영 계획에 필수사항 포함 및 운영위원회 심의 여부"},
+      {text:"강사 선정 시 공고 실시 및 계약 관련 서류 공개·결재"},
+      {text:"강사 시간표와 복무(조퇴·출장 등)를 대조하여 중복 시간 수당이 잘못 지급되지 않았는가?", tag:"★ 단골", note:"행정·회계 세출 수당 지급과 교차 점검 필수"}
+    ]},
+    {title:"4-1 교육공무원 복무 (매뉴얼 p.50~53)", items:[
+      {text:"[복무1] 교원 휴가(연가·병가·공가·특별휴가) — 일수 계산, 증빙서류(7일 이상 병가 진단서 등) 첨부 확인"},
+      {text:"[복무2] 초과근무·탄력적 근무시간제·제41조 연수 — 방학 중 복무 중복 확인 / 국외출장 20일 전 신청"},
+      {text:"[복무3] 영리업무 금지·겸직 허가 — 사교육 관련 겸직 원칙 금지 / 외부강의 사전 결재 여부 / 출장여비 이중 지급 여부", note:"겸직 허가 기간 1년 이내 / 공문으로 결과 통보 필수"},
+      {text:"[복무4] 휴직자 복무관리 — 반기별 점검카드 작성 / 휴직 교원 국외여행 사전 신고·결재"},
+      {text:"학교장의 연가·병가·공가 등 복무 사용 시 직근 상급기관(교육장) 결재 여부"}
+    ]},
+    {title:"4-2 계약제교원 임용 및 복무 관리 (매뉴얼 p.54~55)", items:[
+      {text:"[계약1] 계약제교원 임용 방법·절차 — 3일 이상 채용 공고 / 필수 서류 및 유효기간 확인 / 연장(재)계약 적정성", tag:"중점"},
+      {text:"[계약2] 기간제교원 호봉 획정 — 관련 규정·예규에 따른 호봉 산정 / 유사경력 전력조회 / 호봉경력평가심의회 개최", tag:"★ 단골", note:"23학년도 1·2월 근무분 합산(2023.3.1.부터) 누락 여부 집중 점검"},
+      {text:"[계약3] 기간제교원 복무·근무실적 평가 — 연가·병가·특별휴가 지침 처리 / 6개월 이상 채용 시 다면평가와 별도 실시"},
+      {text:"[계약4] 해고의 예고 및 서면 통지 — 30일 전 계약 해지 사유와 해고 시기를 서면 통지"}
+    ]}
+  ]
+},
+{
+  id:"admin", label:"행정·회계·계약", icon:"🗂️",
+  intro:"투명한 <b>계약 절차</b>와 정확한 <b>회계 집행</b>은 청렴도의 척도입니다. 공사 계약·수당 지급·기간제 호봉 산정은 거의 모든 학교에서 지적되는 단골 영역입니다.",
+  sections:[
+    {title:"예산 및 회계", items:[
+      {text:"건당 50만 원 이상 업무추진비 집행 시 주된 상대방 소속·성명 증빙서류 첨부"},
+      {text:"학기말·학년말 50명 초과 행사 업무추진비 결재 누락 여부", note:"교무실에서 처리 간 놓치는 사례 多"},
+      {text:"신용카드 포인트 — 연 1회 이상 세입 조치 / 매월 1회 이상 학교장 보고·확인"},
+      {text:"회계관계공무원 임명일로부터 30일 이내 재정보증보험 설정·갱신 완료"},
+      {text:"예산 집행 시 목적에 부합하는 적정 비목 사용 및 지출 증빙서류 완비"},
+      {text:"정보 공개 관련 처리를 적정하게 하였는가?", note:"정보 공개 관련 지적 다수"}
+    ]},
+    {title:"각종 계약 관리", items:[
+      {text:"1천만 원 이상 물품 구매 시 5인 이상(21학급 학교 해당) 물품선정위원회 구성·운영"},
+      {text:"동일 업체·동일 성격 사업을 금액을 쪼개 분할 수의계약하지 않았는가?", tag:"쪼개기금지", note:"대표적 단골 지적"},
+      {text:"위탁(방과후 등) 시 공고 내용(개인/업체 구분)과 실제 계약 대상 일치 여부", note:"개인 강사 공고 후 업체 계약 = 특혜 의혹 중대 지적"},
+      {text:"위탁 업체 선정·계약 전 과정에서 학교운영위원회 심의 또는 자문 여부"},
+      {text:"입찰 공고 기간 준수 및 사전 규격 공개 여부"},
+      {text:"중소기업 제품 구매 시 직접생산확인서 징구 여부"}
+    ]},
+    {title:"공사 계약 · 시설", items:[
+      {text:"공사 이력이 있는 경우 — 환경보전비 등 법정 경비 사후 정산 적정성 점검", note:"공사 건은 사실상 거의 모든 건이 지적 대상"},
+      {text:"하자보증 기간 설정 및 보증금 관리 대장 기록 유무 확인"},
+      {text:"학교 시설 안전 점검 후 위험 요소에 대한 즉각 보수 등 시정 조치 이행"},
+      {text:"학교급식 식재료 검수 시 위생 상태 확인 및 관련 기록 보존"}
+    ]},
+    {title:"학교운영위원회 · 발전기금", items:[
+      {text:"회의 소집 7일 전 통지 의무 준수"},
+      {text:"학운위 규정 개정 시 7일 이상 공고 및 의견 수렴"},
+      {text:"위원장(출납명령기관) 교체 시 15일 이내 사무 인계인수 실시"},
+      {text:"동창회 기부금 등을 임의 계좌가 아닌 학교발전기금으로 편입 / 운용계획서 학운위 심의 후 10일 이내 공개"}
+    ]},
+    {title:"인사 · 물품·재산 관리", items:[
+      {text:"기간제 교원 호봉·정근수당 — 종전 근무처 1·2월 근무분 합산(2023.3.1.부터) 누락 여부", tag:"23학년도", note:"수감 기간에 23학년도 포함 → 집중 점검. 급여 과소/과다 지급 사례 多"},
+      {text:"공무직 복무·채용 등 전반 점검 (가장 까다로운 영역 중 하나)"},
+      {text:"물품·공유재산 관리 대장과 실제 보관 물품의 일치 여부 — 정기 재물조사로 확인"}
+    ]}
+  ]
+},
+{
+  id:"cases", label:"단골 지적 예방", icon:"⚠️",
+  intro:"경상남도교육청 감사관 <b>2026 자율형 종합감사 주요 지적사례</b>를 기반으로 구성한 예방 체크리스트입니다. 거의 모든 학교에서 반복되는 유형을 분야별로 정리했으니 <b>스스로 먼저 점검</b>하세요.",
+  evalCases: true,
+  extraHTML:`
+  <div style="margin:12px 0 4px">
+    <div style="background:#FFF3CD;border:1.5px solid #F0C844;border-radius:11px;padding:11px 14px;margin-bottom:10px;font-size:12.5px;color:#7A5800;line-height:1.8">
+      📋 <b>(거의) 모든 학교에서 지적되는 사례</b><br>
+      <span style="display:inline-block;background:#B85C38;color:#fff;border-radius:6px;padding:2px 9px;font-size:11px;font-weight:800;margin:3px 4px 0 0">교무·학사</span> 학생재규정, 계약제교원, 평가 관련, 방과후학교 등<br>
+      <span style="display:inline-block;background:#2B5EA7;color:#fff;border-radius:6px;padding:2px 9px;font-size:11px;font-weight:800;margin:3px 4px 0 0">행정·회계</span> 각종 수당 지급, 공사계약 각종 정산, 정보공개 등
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 교무학사 주요 지적사례 요약</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:var(--paper);border:1.5px solid #E2B7A4;border-radius:10px;overflow:hidden">
+        <div style="background:#B85C38;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">출결 관리 ①</div>
+        <div style="padding:9px 12px;font-size:12px;line-height:1.7">
+          <div style="color:var(--red);font-weight:700">🚫 지적</div>질병 결석을 <b>증빙자료 없이 결석계만으로</b> 처리<br>
+          <div style="color:var(--forest);font-weight:700;margin-top:4px">✅ 기준</div>결석일로부터 5일 이내 진단서 또는 의견서 첨부 필수. 2일 이내는 학부모 의견서·처방전·담임 확인서 가능
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #E2B7A4;border-radius:10px;overflow:hidden">
+        <div style="background:#B85C38;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">출결 관리 ②</div>
+        <div style="padding:9px 12px;font-size:12px;line-height:1.7">
+          <div style="color:var(--red);font-weight:700">🚫 지적</div>학생부 출결 <b>특기사항 기재 소홀</b> — 기타결석사유·원격수업일수·장기결석사유·개근 미입력<br>
+          <div style="color:var(--forest);font-weight:700;margin-top:4px">✅ 기준</div>장기결석(7일 내외) 시 반드시 사유 기재
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #E2B7A4;border-radius:10px;overflow:hidden">
+        <div style="background:#B85C38;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">교외체험학습</div>
+        <div style="padding:9px 12px;font-size:12px;line-height:1.7">
+          <div style="color:var(--red);font-weight:700">🚫 지적</div>신청서·보고서 <b>제출 누락</b>, 제출기한 미준수, 실시기한 불일치<br>
+          <div style="color:var(--forest);font-weight:700;margin-top:4px">✅ 기준</div>신청서: 3일 전, 보고서: 체험학습 후 5일 이내 제출
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #E2B7A4;border-radius:10px;overflow:hidden">
+        <div style="background:#B85C38;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">학생부 행동특성·봉사</div>
+        <div style="padding:9px 12px;font-size:12px;line-height:1.7">
+          <div style="color:var(--red);font-weight:700">🚫 지적</div>행동특성 누가기록 없이 작성, 결석일 봉사활동 입력, 봉사 확인서·기간 오류<br>
+          <div style="color:var(--forest);font-weight:700;margin-top:4px">✅ 기준</div>수시 관찰 누가기록 기반 담임 직접 입력. 결석생 단체봉사 제외
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #E2B7A4;border-radius:10px;overflow:hidden">
+        <div style="background:#B85C38;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">학업성적관리</div>
+        <div style="padding:9px 12px;font-size:12px;line-height:1.7">
+          <div style="color:var(--red);font-weight:700">🚫 지적</div>기본점수 임의 부여, 문항정보표 수정 없이 인정답안 처리, 학성위 심의 없이 복수정답 처리<br>
+          <div style="color:var(--forest);font-weight:700;margin-top:4px">✅ 절차</div>교과협의→학성위→학교장 결재→시행
+        </div>
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #E2B7A4;border-radius:10px;overflow:hidden">
+        <div style="background:#B85C38;color:#fff;padding:7px 12px;font-size:12px;font-weight:800">교내대회</div>
+        <div style="padding:9px 12px;font-size:12px;line-height:1.7">
+          <div style="color:var(--red);font-weight:700">🚫 지적</div>학교교육계획 미수립 후 교내대회 시행, <b>수상자 20% 초과</b> 선정, 수상 대장 오기·누락<br>
+          <div style="color:var(--forest);font-weight:700;margin-top:4px">✅ 기준</div>학년초 계획 수립 필수, 참가인원의 20% 이내
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 교원 복무 주요 지적사례</div>
+    <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:10px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#4A4A4A;color:#fff"><th style="padding:5px 8px;text-align:left">지적 유형</th><th style="padding:5px 8px;text-align:left">구체 사례</th><th style="padding:5px 8px;text-align:left">핵심 기준</th></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#B85C38">공가 사용 부적정</td><td style="padding:6px 8px">건강검진 공가 허가일과 실제 검진일 불일치</td><td style="padding:6px 8px">허가일에 실제 검진 필수</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#B85C38">병가 진단서 미징구</td><td style="padding:6px 8px">연간 누계 6일 초과 병가·병조퇴 시 진단서 미징구</td><td style="padding:6px 8px">6일 초과분부터 의료법 제17조 진단서 필수</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#B85C38">가족돌봄휴가 부적정</td><td style="padding:6px 8px">증빙서류 미제출, PDF첨부(원본 아님)</td><td style="padding:6px 8px">미성년 자녀돌봄=유급, 부모돌봄=무급. 원본 증빙 제출</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#B85C38">겸직 관련 위반</td><td style="padding:6px 8px">무허가 겸직, 허위 신고</td><td style="padding:6px 8px">사전 신청 후 겸직허가 필수. 겸직심사위 구성·운영</td></tr>
+        <tr><td style="padding:6px 8px;font-weight:700;color:#B85C38">외부강의 위반</td><td style="padding:6px 8px">지연 신고, 초과 수령 및 이중 수령</td><td style="padding:6px 8px">사전 결재 및 수령 한도 준수 필수</td></tr>
+      </table>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 계약제교원 주요 지적사례</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;font-size:12px">
+      <div style="background:#FDECEA;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:var(--red);margin-bottom:3px">임용 절차</div>
+        증빙서류 미제출, 호봉경력 평가심의회 미개최, 채용공고 기간 미준수(토·일·공휴 제외 3일 이상)
+      </div>
+      <div style="background:#FDECEA;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:var(--red);margin-bottom:3px">병가 진단서</div>
+        병가 연간 누계 6일 초과 복무신청 시 초과 시간에 대한 진단서 미징구
+      </div>
+      <div style="background:#FDECEA;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:var(--red);margin-bottom:3px">근무실적 평가</div>
+        6개월 이상 채용된 기간제 교원 근무실적 평가 미실시
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 행정·회계 주요 지적사례 — 공사계약</div>
+    <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:10px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#2B5EA7;color:#fff"><th style="padding:5px 8px;text-align:left">지적 유형</th><th style="padding:5px 8px;text-align:left">구체 사례</th></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#2B5EA7">원가계산 소홀</td><td style="padding:6px 8px">산업재해·고용 보험료 미계상, 가입증명원·완납증명원 미징구</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#2B5EA7">환경보전비 미계상</td><td style="padding:6px 8px">환경오염 방지 등 필요한 비용 미계상 및 미정산</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#2B5EA7">공사관리대장 미작성</td><td style="padding:6px 8px">5백만원 이상 공사 시 공사관리대장 및 하자보수관리부 미작성</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#2B5EA7">인지세 미징구</td><td style="padding:6px 8px">계약금액 1천만원 초과 시설공사 → 인지세 2만원 미징구</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#2B5EA7">정산 소홀</td><td style="padding:6px 8px">산업안전보건비·건강보험료·환경보전비·건설폐기물처리비·발생고재 미정산</td></tr>
+        <tr><td style="padding:6px 8px;font-weight:700;color:#2B5EA7">하자담보 소홀</td><td style="padding:6px 8px">하자보수보증 기간 준공검사일로부터 미설정, 보증금률 2% 적용(올바른 것은 3%)</td></tr>
+      </table>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 행정·회계 주요 지적사례 — 인사·보수</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;font-size:12px">
+      <div style="background:var(--paper);border:1.5px solid #AABFE0;border-radius:9px;padding:9px 11px">
+        <div style="font-weight:800;color:#2B5EA7;margin-bottom:4px">기간제 교사 정근수당</div>
+        2023.1월 이후 임용권자(교장)가 달라도 모든 기간제 교사 근무기간 인정 (종전+현재 근무처 합산)
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #AABFE0;border-radius:9px;padding:9px 11px">
+        <div style="font-weight:800;color:#2B5EA7;margin-bottom:4px">교육공무직원 보수</div>
+        명절휴가비·근속수당·상여금 지급 기준일 오류. 연차유급휴가 산정 오류(퇴직·촉탁직)
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #AABFE0;border-radius:9px;padding:9px 11px">
+        <div style="font-weight:800;color:#2B5EA7;margin-bottom:4px">교육공무직원 채용</div>
+        공고 생략, 성범죄·아동학대 전력 미확인, 채용결격사유 확인서 미징구
+      </div>
+      <div style="background:var(--paper);border:1.5px solid #AABFE0;border-radius:9px;padding:9px 11px">
+        <div style="font-weight:800;color:#2B5EA7;margin-bottom:4px">수습평가·근무성적</div>
+        수습평가(최초 근무일부터 3개월, 실제 30일 이상) 계획 미수립 및 미실시
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 행정·회계 주요 지적사례 — 예산·학교운영위</div>
+    <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:8px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#3F6B4E;color:#fff"><th style="padding:5px 8px;text-align:left">지적 유형</th><th style="padding:5px 8px;text-align:left">구체 사례</th></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#3F6B4E">예결산 공개 소홀</td><td style="padding:6px 8px">예결산서 확정일로부터 10일 이내 학교 누리집 미공개 / 수익자부담경비 사업 종료 후 10일 이내 미공개</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#3F6B4E">업무추진비·신용카드</td><td style="padding:6px 8px">건당 50만원 이상 증빙서류 미첨부 / 신용카드 포인트 연 1회 세입 미조치 / 매월 1회 학교장 보고·확인 미실시</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#3F6B4E">재정보증보험 미설정</td><td style="padding:6px 8px">회계관계공무원 임명일로부터 30일 이내 미설정, 만료 전 미갱신</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#3F6B4E">학교운영위원회 공개</td><td style="padding:6px 8px">회의소집 7일 전 미통지 / 학년도 말 예·결산 활동상황보고서 미공개 / 규정 개정 시 7일 이상 공고 누락</td></tr>
+        <tr style="border-bottom:1px solid var(--line-soft)"><td style="padding:6px 8px;font-weight:700;color:#3F6B4E">학교발전기금</td><td style="padding:6px 8px">동창회 기부금을 별도계좌 보관 금지 (발전기금으로 편입). 운용계획서 운영위 심의 후 10일 이내 미공개</td></tr>
+        <tr><td style="padding:6px 8px;font-weight:700;color:#3F6B4E">위원장 사무인계</td><td style="padding:6px 8px">출납명령기관(위원장) 교체 후 15일 이내 인계인수 미실시</td></tr>
+      </table>
+    </div>
+
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:10px 0 7px">📌 행정일반 주요 지적사례</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;font-size:12px">
+      <div style="background:#E3EBF8;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:#1A3D78;margin-bottom:3px">업무 인계인수 미실시</div>
+        조직개편·인사발령·업무분장 조정 시 업무관리시스템 또는 전자문서시스템을 이용한 인계인수 미실시
+      </div>
+      <div style="background:#E3EBF8;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:#1A3D78;margin-bottom:3px">민원처리 확인·점검 소홀</div>
+        매월 1회 이상(매달 5일까지) 지난달 민원처리 상황 확인·점검 미실시. 질의민원 법령 14일·법령외 7일 이내 미회신
+      </div>
+      <div style="background:#E3EBF8;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:#1A3D78;margin-bottom:3px">기록물관리책임자 지정</div>
+        인사발령으로 기록물관리 책임자가 변경되었는데도 내부결재로 지정하지 않음
+      </div>
+      <div style="background:#E3EBF8;border-radius:8px;padding:8px 10px">
+        <div style="font-weight:800;color:#1A3D78;margin-bottom:3px">방과후학교 수당지급</div>
+        방과후학교 강사(교사) 출장·병가·경조사휴가·조퇴·육아시간·병조퇴 시에도 수당 부당 수령
+      </div>
+    </div>
+  </div>`,
+  sections:[
+    {title:"거의 모든 학교 단골 5종 (최우선)", items:[
+      {text:"① 학교규정(재규정) 변경 미반영 여부를 점검하였는가?", note:"학교교권보호위원회→지역교권보호위원회 변경(2024년 상반기) 등 미반영 사례 多"},
+      {text:"② 계약제(기간제) 교원 채용 서류·호봉 사항을 점검하였는가?", tag:"★", note:"증빙서류, 호봉경력 평가심의회 개최, 근무실적 평가 등 전 항목 확인"},
+      {text:"③ 수당 지급(시간외·방과후·누리교실 등) 중복·부당 여부를 점검하였는가?", tag:"★", note:"방과후학교 강사 출장·병가·조퇴 시 수당 지급 여부, 누리교실 조퇴 사용 중 수당 지급 여부"},
+      {text:"④ 공사 계약(정산·하자보증 포함) 일체를 점검하였는가?", tag:"★", note:"산업재해보험·환경보전비·건강보험료·고재 정산, 하자보증금율 3% 적용 여부"},
+      {text:"⑤ 정보 공개 관련 처리를 점검하였는가?", note:"예결산 10일 이내 공개, 방과후 만족도 결과 공개, 학교운영위 관련 공개 등"}
+    ]},
+    {title:"교무·학사 — 출결·학생부 지적 사례 예방 점검", items:[
+      {text:"질병결석 증빙서류 구비 — 결석 후 5일 이내 진단서 또는 의견서 첨부 결석계 확인", tag:"단골", note:"2일 이내: 학부모 의견서·처방전·담임확인서 가능. 5일 이상 동종 결석 시 학생부 사유 기재 필수"},
+      {text:"학생부 출결 특기사항 — 기타결석사유·원격수업일수·장기결석사유·개근 입력 누락 점검", note:"장기결석: 교육부 훈령 7일 내외(학교장 최대 3일 조정 가능)"},
+      {text:"교외체험학습 신청서·보고서 제출기한 준수 확인 (신청: 3일 전 / 보고서: 체험 후 5일 이내)", tag:"단골"},
+      {text:"행동특성 및 종합의견 — 누가기록 없이 작성된 사례 점검 (학생 제출물 기반 작성 금지)"},
+      {text:"봉사활동 기재 — 결석일 봉사 처리 여부, 단체봉사 확인서 누락, 봉사일·기간 오류 점검", note:"대회출전·결석일 봉사활동 입력은 대표적 지적 사례"},
+      {text:"학생부 정정 — 학년 종료 후 정정 시 객관적 증빙+학성위 심의+4단 결재 준수 여부"},
+      {text:"학교폭력 조치사항 삭제 — 졸업 시 1·2·3호 동시 삭제, 졸업 후 2년 경과 시 6호 삭제 여부", tag:"단골"}
+    ]},
+    {title:"교무·학사 — 복무·겸직·학생선도 지적 사례 예방 점검", items:[
+      {text:"병가 연간 누계 6일 초과 시 진단서 징구 여부 점검 (교육공무원·계약제교원 동일 적용)", tag:"단골"},
+      {text:"공가 허가일과 실제 건강검진일 일치 여부 확인 (허가일 실제 검진 필수)"},
+      {text:"가족돌봄휴가 증빙서류 원본 제출 여부 (PDF첨부 불가, 미성년 자녀=유급/부모=무급)"},
+      {text:"겸직 — 무허가 겸직 및 허위 신고 여부 점검 (사전 겸직심사위 심의 필수)"},
+      {text:"외부강의 — 지연 신고 및 초과·이중 수령 여부 점검"},
+      {text:"학생선도위원회 — 학생·보호자에게 위원회 개최·의견진술·대리인 선임권 등을 서면 통보 여부"},
+      {text:"징계 결정 후 보호자에게 문서 통보 및 재심의 신청 가능 여부·청구절차·기간 고지 여부"},
+      {text:"교육활동 침해행위 예방교육 매년 1회 이상 실시 및 홈페이지 게시 여부"}
+    ]},
+    {title:"교무·학사 — 학업성적·교내대회·특수교육 지적 사례 예방 점검", items:[
+      {text:"학성위 심의 없이 기본점수 임의 부여 또는 배점 외 부분점수 부여 여부", tag:"★"},
+      {text:"출제오류로 복수정답 처리 시 교과협의→학성위→학교장 결재 절차 준수 여부"},
+      {text:"채점 오류 — 채점지:집계표:NEIS 입력값 3단계 불일치 전수 대조", tag:"★", note:"서술형 채점 소홀, 개별점수·합계 오류, 채점기준표 상이 채점 포함"},
+      {text:"교내대회 — 학년초 학교교육계획서에 사전 계획 수립 여부 및 수상자 20% 이내 선정 여부"},
+      {text:"교내대회 수상 대장 기재 오류(등급 오기) 및 입상 누락 여부 점검"},
+      {text:"특수교육 — 학년 시작 2주 이내 개별화교육지원팀 구성, 학기 시작 30일 이내 개별화교육계획 작성 여부"},
+      {text:"개별화교육 — 학생별 현행학습수행 수준 반영 여부 (학년별 동일 내용 구성 시 지적 대상)"},
+      {text:"방과후학교 — 실시계획·만족도조사 결과 홈페이지 공개 여부, 강사 선정 공고 절차 준수 여부"}
+    ]},
+    {title:"행정·회계 — 공사계약 지적 사례 예방 점검", items:[
+      {text:"공사 원가계산 — 산업재해·고용보험료 계상 및 가입·완납증명원 징구 여부", tag:"★"},
+      {text:"환경보전비(간접공사비) — 비용 계상 및 사용실적 정산 여부"},
+      {text:"산업안전보건관리비 — 사용명세서 확인 및 개인보호구 착용 증빙자료 징구 여부"},
+      {text:"건강보험료 정산 — 국민연금·건강·노인장기요양보험료 납부 확인서 징구 및 정산"},
+      {text:"건설폐기물처리비 — 5톤 이상 폐기물 처리 계획서 신고 및 처리비 증빙자료 징구"},
+      {text:"발생고재(철거물) 정산 — 경제성 있는 물품 처분 후 세입 처리 또는 의가격 정산"},
+      {text:"공사관리대장 및 하자보수관리부 작성 여부 (500만원 이상 공사)"},
+      {text:"하자보수보증금률 3% 적용 여부 (2% 적용 시 지적), 보증기간 준공검사일 기준 설정"},
+      {text:"계약금액 1천만원 초과 시설공사 인지세(2만원) 징구 여부"},
+      {text:"어린이활동공간 수선(도료·마감재·합성고무 70㎡ 이상) 시 검사기관 확인검사 수검 여부"}
+    ]},
+    {title:"행정·회계 — 용역·물품·인사관리 지적 사례 예방 점검", items:[
+      {text:"기초금액 작성 — 거래실례가격·원가계산가격·견적가격 조사 없이 임의 작성 여부"},
+      {text:"물품선정위원회 — 품목당 구매예정금액 1천만원 이상 물품 구매 시 5인 이상 위원회 구성·개최", tag:"단골"},
+      {text:"중소기업 제품 — 직접생산확인증명서 징구 여부 (수의계약 추정가격 1천만원 이상)"},
+      {text:"검사·검수 — 계약금액 3천만원 이상 공사·용역·물품 계약 시 학교장 확인 여부"},
+      {text:"교육공무직원 채용 — 성범죄·아동학대 범죄전력 조회 여부, 채용결격사유 확인서 징구"},
+      {text:"교육공무직원 수습평가 — 최초 근무일부터 3개월, 실제 30일 이상 근무 확보 및 평가 실시"},
+      {text:"교육공무직원 근무성적평정 — 매년 학교 2월말 기준 계획 수립 및 평정 실시 여부"},
+      {text:"물품 취득·처분 — 내용연수 미경과 물품 불용 결정·소요조회 없이 폐기 여부", note:"구입단가 3천만원 이상 물품 교육장 승인 없이 불용 처리 지적 多"}
+    ]},
+    {title:"평가 집중 점검 — 자율점검표 3-2-2 항목8 (★ 전 학교 발생)", items:[
+      {text:"학생별 채점 오류(예: 채점지 3점 → 집계표 5점) 유무를 교과별 표본 대조하였는가?", tag:"★", note:"채점지 → 채점결과 집계표 → NEIS 입력값까지 4단계 추적"},
+      {text:"개별 점수 확대 적용(채점기준 없이 임의 점수 상향) 여부를 점검하였는가?", tag:"★"},
+      {text:"채점기준표 배점(예 5점)과 실제 채점(예 7점)의 불일치를 점검하였는가?", tag:"★", note:"학업성적관리위 심의 채점기준표와 실제 채점지 문항별 대조"},
+      {text:"총점 NEIS 입력 오류(지필+수행 합계 단순 오기 등)를 전수 대조하였는가?", tag:"★", note:"확인서 3건만 제출된 학교는 평가 집중 시 추가 적발 가능"},
+      {text:"수행평가 기초자료(채점기준표·채점지·집계표)를 보관하고 있는가?"},
+      {text:"부정행위 처리 시 학생 진술서 + 학부모 통보 증빙을 구비하였는가?"}
+    ]},
+    {title:"확인서 제출 개수·23학년도 포함 항목", items:[
+      {text:"교무·학사 약 10건 / 행정·회계 약 10건 수준의 확인서 작성을 목표로 하였는가?", note:"통상 20건 이상 발생 · 3~4건만 제출 시 셀프감사 의구심 발생"},
+      {text:"학교폭력 — 2023.3.1. / 2024.3.1. 시기별 적용 법령을 구분하였는가?"},
+      {text:"교권 보호 — 학교교권보호위원회→지역교권보호위원회 변경(2024년 상반기) 반영 여부"},
+      {text:"호봉·기간제 — 23학년도 1·2월 합산 정근수당 산정 기준 별도 확인 여부"}
+    ]}
+  ]
+},
+{
+  id:"confirm", label:"확인서 요령", icon:"📝",
+  intro:"<b>확인서 → 현지조치통보서 → 처분심의 자료 → 처분서</b> 순으로 이어집니다. 경상남도교육청 감사관 확인서 작성 요령(2026)을 기반으로 정리했습니다.",
+  extraHTML:`
+  <div style="margin:12px 0 6px">
+    <!-- 흐름도 -->
+    <div class="confirm-flow">
+      <span style="font-size:12px;font-weight:700;color:var(--blue-dark);margin-right:4px;">확인서 처리 흐름</span>
+      <span class="confirm-flow-step">①확인서 작성</span>
+      <span class="confirm-flow-arrow">→</span>
+      <span class="confirm-flow-step">②내부결재</span>
+      <span class="confirm-flow-arrow">→</span>
+      <span class="confirm-flow-step">③D-10 제출</span>
+      <span class="confirm-flow-arrow">→</span>
+      <span class="confirm-flow-step">④3차 점검</span>
+      <span class="confirm-flow-arrow">→</span>
+      <span class="confirm-flow-step">⑤현지조치통보서</span>
+      <span class="confirm-flow-arrow">→</span>
+      <span class="confirm-flow-step">⑥처분서</span>
+    </div>
+
+    <!-- 서식 구조 -->
+    <div class="confirm-form" style="margin-top:10px">
+      <div class="confirm-form-title">확 &nbsp; 인 &nbsp; 서</div>
+      <div class="confirm-field">
+        <div class="confirm-field-label">□ 제 목</div>
+        <div class="confirm-field-desc">○○○ 업무 소홀 &nbsp;<span style="color:var(--terra-dark);font-size:11px">← 지적된 업무 명칭으로 단번에 알 수 있게</span></div>
+        <div class="confirm-field-tip">3차 점검 단계: '○○ 업무 소홀' 또는 '○○ 업무 부적정' / 확정 후 '위반·부당 처리'로 변경 가능</div>
+      </div>
+      <div class="confirm-field">
+        <div class="confirm-field-label">□ 내 용 (= 정당론 + 비난사실)</div>
+        <div class="confirm-field-desc">
+          <b style="color:#5B3EB5">[정당론]</b> 「법령명」(소관부서) 제○조에 ～하도록 되어 있고, <br>
+          <span style="color:var(--muted);font-size:11.5px">법령명은 반드시 「 」로 표시 · 소관 부서를 괄호로 명시 · 반복 시 '고, 며, 고, 며' 순</span><br><br>
+          <b style="color:var(--red)">그런데도</b> [직급·성명]은 [날짜]에 ～하지 않는 등 [표]와 같이 ～ <b>소홀히 하였다.</b><br>
+          <span style="color:var(--muted);font-size:11.5px">비난사실: 6하원칙·능동태·사실위주 작성</span>
+        </div>
+      </div>
+      <div class="confirm-field">
+        <div class="confirm-field-label">□ 관련자 (직·성명 / 관리기간 / 담당업무 / 현 근무처)</div>
+        <div class="confirm-field-tip">관리기간 = 수감기간 중 그 업무를 담당한 기간 · 행정실장은 실제 직급 무관하게 '행정실장' 표기 · 현 근무처는 현재 수감기관에 재직 중이 아닌 경우에만 기재</div>
+      </div>
+      <div class="confirm-field">
+        <div class="confirm-field-label">□ 관련자 의견 (이의·소명 있을 때만 작성)</div>
+        <div class="confirm-field-tip">비고란에 관련자가 확인한 일자 기재 · 3차 점검 시 작성 (1·2차 시 관련자에게 고지·소통 필수)</div>
+      </div>
+      <div class="confirm-field" style="border-left-color:var(--blue)">
+        <div class="confirm-field-label" style="color:var(--blue)">확인자 서명 (삼계중학교 기준)</div>
+        <div class="confirm-field-desc">
+          <span style="background:#EDE8F8;color:#5B3EB5;padding:2px 7px;border-radius:5px;font-size:11.5px;font-weight:700">교무·학사</span>
+          &nbsp;감사관(김경수 교감) + 확인자(구정진 교감) + 확인자(황영숙 교장)<br>
+          <span style="background:#E4F2E9;color:#1A5C30;padding:2px 7px;border-radius:5px;font-size:11.5px;font-weight:700;margin-top:4px;display:inline-block">일반행정</span>
+          &nbsp;감사관(정민석 행정7급) + 확인자(이성제 행정실장) + 확인자(황영숙 교장)
+        </div>
+      </div>
+    </div>
+
+    <!-- 3대 원칙 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:14px 0 7px">📌 확인서 작성 3대 원칙</div>
+    <div class="principle-grid">
+      <div class="principle-card pc-1">
+        <div class="principle-card-head"><span>1️⃣</span> 육하원칙</div>
+        <div class="principle-card-body">
+          누가 · 언제 · 어디서 · 무엇을 · 어떻게 · 왜 — 사실관계를 시간순으로 명확히
+          <div class="principle-ex">
+            <div class="principle-ex-good">교사 김교육은 2025.3.4. 자녀 입학식 참석을 사유로 가족돌봄휴가를 실시하면서 증빙서류를 제출하지 않아 사용 여부를 알 수 없게 하는 등 교원 복무 처리를 소홀히 하였다.</div>
+          </div>
+        </div>
+      </div>
+      <div class="principle-card pc-2">
+        <div class="principle-card-head"><span>2️⃣</span> 능동태</div>
+        <div class="principle-card-body">
+          피동형 → 능동형으로 전환
+          <div class="principle-ex">
+            <div class="principle-ex-bad">❌ 사업이 추진되지 못하였다</div>
+            <div class="principle-ex-good">✅ 사업을 추진하지 못하였다</div>
+            <div style="margin-top:6px" class="principle-ex-bad">❌ 지급받게 되었다</div>
+            <div class="principle-ex-good">✅ 지급하였다</div>
+          </div>
+        </div>
+      </div>
+      <div class="principle-card pc-3">
+        <div class="principle-card-head"><span>3️⃣</span> 사실위주</div>
+        <div class="principle-card-body">
+          모호한 표현·약어·전문용어 지양, 설명 필요 시 각주 활용
+          <div class="principle-ex">
+            <div class="principle-ex-bad">❌ 심의에서 누락되는 결과를 초래하였다</div>
+            <div class="principle-ex-good">✅ 심의를 받지 않았다</div>
+            <div style="margin-top:6px" class="principle-ex-bad">❌ 인계인수를 소홀히 하도록 방치하였다</div>
+            <div class="principle-ex-good">✅ 인계인수를 실시하지 않았다</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 다수 관련자 작성 예시 -->
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin:14px 0 7px">📌 다수 관련자 작성 예시 (서술형 채점 오류 — 표 활용)</div>
+    <div class="example-box">
+      <div class="ex-bad">
+        <div class="ex-label">🚫 잘못된 방법 (×)</div>
+        교사 A는 2023학년도 1학년 000의 국어 서술형 채점 합산을 잘못하였고, 교사 B는 2024학년도 2학년 000의 영어 서술형 채점 합산을 잘못하였으며, 교사 C는 2025학년도 3학년 000의 수학 서술형 채점 합산을 잘못하였다.
+      </div>
+      <div class="ex-good" style="margin-top:6px">
+        <div class="ex-label">✅ 올바른 방법 (○) — 첫 사례 구체 + [표] 활용</div>
+        그런데도 <b>교사 A는 2023학년도 1학년 학생 홍길동의 국어 서술형 채점을 하면서 합산 점수를 50점인데도 100점으로 잘못 채점하는 등</b> [표]와 같이 3명의 관련자가 2023학년도부터 2025학년도까지 학생 총 3명의 지필평가 채점을 소홀히 하였다.<br><br>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:4px">
+          <tr style="background:#2A6B3C;color:#fff"><th style="padding:4px 7px">순</th><th style="padding:4px 7px">학년도</th><th style="padding:4px 7px">학년·성명</th><th style="padding:4px 7px">과목</th><th style="padding:4px 7px">잘못 채점</th><th style="padding:4px 7px">정당 채점</th><th style="padding:4px 7px">관련자</th></tr>
+          <tr style="border-bottom:1px solid #BCD3C0"><td style="padding:4px 7px;text-align:center">1</td><td style="padding:4px 7px">2023</td><td style="padding:4px 7px">1학년 홍길동</td><td style="padding:4px 7px">국어</td><td style="padding:4px 7px;color:var(--red);font-weight:700">100점</td><td style="padding:4px 7px">50점</td><td style="padding:4px 7px">교사 A</td></tr>
+          <tr style="border-bottom:1px solid #BCD3C0"><td style="padding:4px 7px;text-align:center">2</td><td style="padding:4px 7px">2024</td><td style="padding:4px 7px">2학년 000</td><td style="padding:4px 7px">영어</td><td style="padding:4px 7px;color:var(--red);font-weight:700">100점</td><td style="padding:4px 7px">60점</td><td style="padding:4px 7px">교사 B</td></tr>
+          <tr><td style="padding:4px 7px;text-align:center">3</td><td style="padding:4px 7px">2025</td><td style="padding:4px 7px">3학년 000</td><td style="padding:4px 7px">수학</td><td style="padding:4px 7px;color:var(--red);font-weight:700">100점</td><td style="padding:4px 7px">70점</td><td style="padding:4px 7px">교사 C</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 법령 검색 경로 -->
+    <div style="background:#FFF8E1;border:1px solid #F0C844;border-radius:8px;padding:9px 12px;margin-top:8px;font-size:12px;color:#7A5800;line-height:1.7">
+      📂 <b>법령 검색 경로:</b> 법령 → 법제처 국가법령정보센터 &nbsp;|&nbsp; 지침 → K-에듀파인 &gt; 문서등록대장 &nbsp;|&nbsp; 업무별 기본계획 → K-에듀파인 &gt; 업무지원 &gt; 기본계획알림방<br>
+      📥 <b>확인서 예시 다운로드:</b> 경상남도교육청 누리집 &gt; 감사관 &gt; 자율형 종합감사 &gt; 자료마당 &nbsp;|&nbsp; K-에듀파인 &gt; 업무지원 &gt; 일반게시판 &gt; 자율형 종합감사 업무지원<br>
+      📌 <b>2026 신기능:</b> 자율점검표 감사 점검 내용의 <b>책갈피(링크)</b>를 클릭하면 해당 확인서 예시로 바로 연결됨
+    </div>
+  </div>`,
+  sections:[
+    {title:"확인서 절차 점검", items:[
+      {text:"2차 점검(07.07.~07.20.) 완료 후 △·× 지적 건에 대해 업무담당자·내부감사관이 확인서 작성 착수"},
+      {text:"확인서 작성 후 관련자에게 지적사실 확인(전화·메신저·업무메일) — 1·2차 점검 시부터 사전 고지"},
+      {text:"학교장(황영숙) 내부 결재 완료", tag:"삼계중"},
+      {text:"08.09.(D-10)까지 외부감사관(김경수 교감, 정민석 행정7급)·도감사관에게 업무메일로 확인서+자율점검표 전송", tag:"D-10"},
+      {text:"3차 외부점검 후 최종 확인서 — 관련자 확인 여부·확인 날짜를 관련자 의견 비고란에 기재"}
+    ]},
+    {title:"제목·내용 작성 점검", items:[
+      {text:"제목 — '○○ 업무 소홀' 또는 '○○ 업무 부적정'으로 지적된 업무 명칭을 명확히 기재"},
+      {text:"정당론 — 법령명·규정을 「 」 안에 표기, 소관 부서를 괄호로 명시, 반복 시 '고, 며, 고, 며' 순"},
+      {text:"비난사실 — '그런데도'로 시작, 6하원칙·능동태·사실위주로 작성, 주관적 표현·전문용어 배제"},
+      {text:"다수 관련자(2건 이상 동일 유형) — 첫 사례를 구체 서술 후 '등 [표]와 같이' 표 형식으로 정리"}
+    ]},
+    {title:"관련자·서명 점검", items:[
+      {text:"관련자 관리기간 = 수감기간 중 그 업무를 실제 담당한 기간으로 기재"},
+      {text:"행정실장은 실제 직급에 상관없이 '행정실장'으로 표기", tag:"필수"},
+      {text:"현 근무처 — 현재 삼계중학교에 재직 중이 아닌 경우에만 기재 (재직 중이면 공란)", tag:"삼계중"},
+      {text:"교무·학사 확인자: 감사관(김경수 교감) + 교감(구정진) + 교장(황영숙) 서명", tag:"삼계중"},
+      {text:"일반행정 확인자: 감사관(정민석 행정7급) + 행정실장(이성제) + 교장(황영숙) 서명", tag:"삼계중"},
+      {text:"관련자 의견 비고란: 이의 없으면 작성 불필요 / 비고에 관련자가 확인한 일자 기재"}
+    ]},
+    {title:"최종 제출 전 점검", items:[
+      {text:"법령명 「 」 기호 사용 여부 / 소관 부서 괄호 표기 여부"},
+      {text:"능동태 전환 확인 — 피동형('되어졌다', '받게 되었다') 전체 수정"},
+      {text:"사실위주 확인 — 모호한 표현('소홀히 하도록 방치', '누락되는 결과를 초래') 제거"},
+      {text:"표준 서식(매뉴얼 39쪽) 준수 — 임의 글자체·색 꾸밈 금지"},
+      {text:"맞춤법 검사 완료 / 표 형식 사용 시 제목·단위 기재 확인"},
+      {text:"[권장] 능동태(~하였다), '과/와' 연결어 사용, 객관적 사실 기술", tag:"권장"},
+      {text:"[지양] 수동태, '및' 과도한 사용, 주관적 추측(~로 생각됨)", tag:"지양"}
+    ]}
+  ]
+},
+{
+  id:"close", label:"마감·사후", icon:"✅",
+  intro:"3일차 <b>마감회의(08.21.)와 현지조치통보서</b>, 이후 <b>사후 처리·환류</b>까지가 감사의 완성입니다. 마감회의는 08.21. 오후 2시 이후 일정을 엄수하세요.",
+  extraHTML:`
+  <!-- 현지조치통보서 서식 예시 -->
+  <div style="margin:12px 0 6px">
+    <div style="font-size:13px;font-weight:800;color:var(--terra-dark);margin-bottom:8px">📋 현지조치통보서 서식 예시 (삼계중학교 기준)</div>
+    <div class="jiji-form">
+      <h4>현 지 조 치 통 보 서</h4>
+      <div class="jiji-row"><span class="jiji-key">수신:</span> 삼계중학교장 (황영숙)</div>
+      <div class="jiji-row"><span class="jiji-key">내용:</span> 2026.08.19.~08.21.(3일간) 실시한 자율형 종합감사 시 확인점검 결과 현지조치 사항을 붙임과 같이 알려드리니, 업무 개선에 적극적으로 활용하시기 바랍니다.</div>
+      <div class="jiji-row"><span class="jiji-key">붙임:</span> 1. 현지조치사항 일람표 1부. &nbsp; 2. 현지조치사항 각 1부.</div>
+      <div class="jiji-row"><span class="jiji-key">날짜:</span> 2026.08.21.</div>
+      <div style="margin-top:10px;font-size:12.5px;display:flex;flex-direction:column;gap:4px">
+        <div>외부감사관(교무·학사) &nbsp; 김해율하고 &nbsp; 교감 &nbsp; 김경수 (인)</div>
+        <div>외부감사관(행정·회계) &nbsp; 옥종고등학교 &nbsp; 행정실장 &nbsp; 정민석 (인)</div>
+        <div>인 수 자 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 삼계중학교 &nbsp; 교장 &nbsp; 황영숙 (인)</div>
+      </div>
+    </div>
+    <div style="background:#FFF8E1;border:1px solid #F0C844;border-radius:8px;padding:9px 12px;font-size:12px;color:#7A5800;line-height:1.7">
+      ⏰ <b>작성 시한: 08.21.(마지막 날) 오전 11시까지</b> · 작성 주체: 외부감사관<br>
+      📋 <b>현지조치사항 일람표</b> — 번호·제목·처리의견('시정')·결과회보여부 기재<br>
+      💰 재정 환수 건은 금액 + 결과 회보 여부('필요') 반드시 표시 · 결과회보 필요 건은 결과보고서 작성 시 이행내용에 포함(증빙 포함)
+    </div>
+  </div>`,
+  sections:[
+    {title:"3일차 마감 정리 (2026.08.21.)", items:[
+      {text:"외부감사관+도감사단이 지적사항을 최종 논의·분류 — 현지조치 종결 vs 처분 연결"},
+      {text:"마감회의(08.21. 오후 2시 이후) 일정 엄수", tag:"엄수", note:"황영숙 교장·구정진 교감·이성제 행정실장·도감사관·외부감사관 등 참석"},
+      {text:"관련자에게 지적사항 사전 고지 여부 반드시 확인", tag:"필수", note:"재심의 사례 대부분이 '본인이 몰랐다'에서 비롯"},
+      {text:"자율점검표 3차 점검란에 외부감사관이 빠짐없이 서명(1·2차는 학교, 3차는 외부감사관)"}
+    ]},
+    {title:"현지조치통보서 점검", items:[
+      {text:"작성 주체(외부감사관 김경수·정민석) / 시한(08.21. 오전 11시까지)", tag:"11시까지"},
+      {text:"대상 요건 확인 — 고의·중과실이 아니고 현지 시정이 가능한 사항에 한정"},
+      {text:"수신(삼계중) / 기간(08.19.~08.21.) / 작성일자(08.21.) / 인수자(황영숙 교장) 정확히 기재", tag:"삼계중"},
+      {text:"현지조치사항 일람표 — 번호·제목·처리의견('시정')·결과회보여부 기재"},
+      {text:"재정 환수 건 — 금액 + '결과회보여부: 필요' 표시 / 결과보고서 작성 시 이행내용+증빙 포함"}
+    ]},
+    {title:"기타 정리 · 사후 처리", items:[
+      {text:"여비 정산 — 3일간 출장 내역·영수증을 삼계중 행정실(임수진 주무관)에 제출 (08.24.)", note:"소속기관이 아닌 수감학교 행정실 제출"},
+      {text:"감사만족도 조사 — 08.24.~08.28. 전교직원 온라인 (구정진 교감·이성제 행정실장 총괄)", tag:"08.24~28"},
+      {text:"처분심의회 개최 / 감사 사후 처리 및 결과 보고(08.28.) 완료", tag:"08.28"},
+      {text:"처분(시정·개선) 이행결과 도교육청 제출", tag:"송달 후 30일 이내"},
+      {text:"지적사례 재발 방지 — 교직원 자체 연수 및 환류 구조 마련"},
+      {text:"자율형 종합감사 서류(자율점검표 등) 편철하여 5년 보관"}
+    ]}
+  ]
+},
+{
+  id:"qna", label:"Q&A", icon:"💬", qna:true, sections:[]
+}
+];
+
+/* ============ RENDER ============ */
+const STORAGE_KEY = "samgye_AuditChecklist:v4";
+let checked = new Set();
+let activeTab = DATA[0].id;
+
+const tabbar = document.getElementById('tabbar');
+const wrap = document.getElementById('wrap');
+const barFill = document.getElementById('barFill');
+const pctText = document.getElementById('pctText');
+
+function itemId(tabId,si,ii){return tabId+"-"+si+"-"+ii;}
+function totalCount(){return DATA.filter(t=>!t.qna).reduce((s,t)=>s+t.sections.reduce((a,sec)=>a+sec.items.length,0),0);}
+function tabDone(tab){let d=0,t=0;tab.sections.forEach((sec,si)=>sec.items.forEach((_,ii)=>{t++;if(checked.has(itemId(tab.id,si,ii)))d++;}));return[d,t];}
+function checkSVG(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';}
+
+function buildTabs(){
+  tabbar.innerHTML="";
+  DATA.forEach(tab=>{
+    const btn=document.createElement('button');
+    btn.className="tab"+(tab.id===activeTab?" active":"");
+    btn.dataset.tab=tab.id;
+    if(tab.qna){
+      btn.innerHTML='<span class="tab-icon">'+tab.icon+'</span><span class="tab-label">'+tab.label+'</span>';
+    }else{
+      const [d,t]=tabDone(tab);
+      btn.innerHTML=
+        '<span class="tab-icon">'+tab.icon+'</span>'+
+        '<span class="tab-label">'+tab.label+'</span>'+
+        '<span class="badge'+(d===t?' full':'')+'" data-tb="'+tab.id+'">'+d+'/'+t+'</span>';
+    }
+    btn.addEventListener('click',()=>switchTab(tab.id));
+    tabbar.appendChild(btn);
+  });
+}
+
+function buildPanels(){
+  wrap.innerHTML="";
+  DATA.forEach(tab=>{
+    const panel=document.createElement('div');
+    panel.className="panel"+(tab.id===activeTab?" active":"");
+    panel.dataset.panel=tab.id;
+
+    if(tab.extraHTML){
+      const ex=document.createElement('div');
+      ex.innerHTML=tab.extraHTML;
+      panel.appendChild(ex);
+    }
+
+    if(tab.intro){
+      const intro=document.createElement('div');
+      intro.className="panel-intro";
+      intro.innerHTML=tab.intro;
+      panel.appendChild(intro);
+    }
+
+    // 평가 사례 카드 (단골 지적 탭 전용)
+    if(tab.evalCases){
+      const ec=document.createElement('div');
+      ec.innerHTML=EVAL_CASES_HTML;
+      panel.appendChild(ec);
+    }
+
+    if(tab.qna){
+      const qc=document.createElement('div');
+      qc.id="qnaRoot";
+      panel.appendChild(qc);
+      wrap.appendChild(panel);
+      return; // qna 탭은 체크리스트 섹션 렌더링 생략
+    }
+
+    tab.sections.forEach((sec,si)=>{
+      const card=document.createElement('section');
+      card.className="section";
+      const head=document.createElement('div');
+      head.className="sec-head";
+      head.innerHTML='<div class="sec-mark"></div><div class="sec-title">'+sec.title+'</div>'+
+        '<div class="sec-count" data-sc="'+tab.id+'-'+si+'">0 / '+sec.items.length+'</div>';
+      card.appendChild(head);
+
+      const ul=document.createElement('ul');ul.className="items";
+      sec.items.forEach((it,ii)=>{
+        const id=itemId(tab.id,si,ii);
+        const li=document.createElement('li');
+        li.className="item"+(checked.has(id)?" checked":"");
+        li.tabIndex=0;li.dataset.id=id;
+        let tagCls="tag";
+        if(it.tag){
+          if(/중대|쪼개기|민감|지양/.test(it.tag))tagCls="tag crit";
+          else if(it.tag==="권장")tagCls="tag good";
+          else if(it.tag==="★"||/단골/.test(it.tag))tagCls="tag star";
+          else if(/삼계중|진행중|내일/.test(it.tag))tagCls="tag blue";
+        }
+        const tag=it.tag?'<span class="'+tagCls+'">'+it.tag+'</span>':"";
+        const note=it.note?'<div class="it-note">'+it.note+'</div>':"";
+        const ref=it.ref?'<span class="it-ref">근거 · '+it.ref+'</span>':"";
+        li.innerHTML='<span class="box">'+checkSVG()+'</span>'+
+          '<div class="it-body"><div class="it-text">'+it.text+tag+'</div>'+note+ref+'</div>';
+        li.addEventListener('click',()=>toggle(id,li));
+        li.addEventListener('keydown',e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();toggle(id,li);}});
+        ul.appendChild(li);
+      });
+      card.appendChild(ul);
+      panel.appendChild(card);
+    });
+    wrap.appendChild(panel);
+  });
+
+  const controls=document.createElement('div');
+  controls.className="controls";
+  controls.innerHTML=
+    '<div class="note-foot">※ 삼계중학교 2026 자율형 종합감사 운영계획서 및 자율점검 매뉴얼(교무·학사)을 기반으로 제작. '+
+    '수감기간 2023.12.4.~2026.2.28. · 최신 법령·지침과 반드시 대조하시기 바랍니다.</div>'+
+    '<button class="btn-reset" id="resetBtn">전체 초기화</button>';
+  wrap.appendChild(controls);
+  document.getElementById('resetBtn').addEventListener('click',resetAll);
+}
+
+function refreshCounts(){
+  const total=totalCount(),done=checked.size;
+  const pct=total?Math.round(done/total*100):0;
+  barFill.style.width=pct+"%";
+  pctText.innerHTML=pct+'% <small>('+done+'/'+total+')</small>';
+  DATA.forEach(tab=>{
+    const [d,t]=tabDone(tab);
+    const badge=tabbar.querySelector('[data-tb="'+tab.id+'"]');
+    if(badge){badge.textContent=d+'/'+t;badge.classList.toggle('full',d===t);}
+    tab.sections.forEach((sec,si)=>{
+      let sd=0;sec.items.forEach((_,ii)=>{if(checked.has(itemId(tab.id,si,ii)))sd++;});
+      const sc=wrap.querySelector('[data-sc="'+tab.id+'-'+si+'"]');
+      if(sc){sc.textContent=sd+' / '+sec.items.length;sc.classList.toggle('full',sd===sec.items.length);}
+    });
+  });
+}
+
+function toggle(id,li){
+  if(checked.has(id)){checked.delete(id);li.classList.remove('checked');}
+  else{checked.add(id);li.classList.add('checked');}
+  refreshCounts();save();
+}
+
+function switchTab(tabId){
+  activeTab=tabId;
+  tabbar.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabId));
+  wrap.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===tabId));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function resetAll(){
+  if(confirm("모든 탭의 체크를 초기화할까요? 되돌릴 수 없습니다.")){
+    checked=new Set();
+    wrap.querySelectorAll('.item.checked').forEach(li=>li.classList.remove('checked'));
+    refreshCounts();
+    try{await window.storage.delete(STORAGE_KEY,false);}catch(e){}
+  }
+}
+async function save(){
+  try{await window.storage.set(STORAGE_KEY,JSON.stringify([...checked]),false);}catch(e){}
+}
+async function load(){
+  try{
+    const res=await window.storage.get(STORAGE_KEY,false);
+    if(res&&res.value){const arr=JSON.parse(res.value);if(Array.isArray(arr))checked=new Set(arr);}
+  }catch(e){}
+  wrap.querySelectorAll('.item').forEach(li=>{li.classList.toggle('checked',checked.has(li.dataset.id));});
+  refreshCounts();
+}
+
+buildTabs();
+buildPanels();
+refreshCounts();
+load();
+
+/* ===== 자료실 미리보기 토글 ===== */
+(function(){
+  const DRIVE_FOLDER_ID = "12cit4rXQ75OBBKzQ145GDcVZptwtB6pt";
+  const EMBED_URL = "https://drive.google.com/embeddedfolderview?id="+DRIVE_FOLDER_ID+"#list";
+  const toggle=document.getElementById('archiveToggle');
+  const panel=document.getElementById('archivePanel');
+  const iframe=document.getElementById('archiveIframe');
+  let loaded=false;
+  function closePanel(){panel.classList.remove('open');}
+  function openPanel(){
+    if(!loaded){iframe.src=EMBED_URL;loaded=true;}
+    panel.classList.add('open');
+  }
+  toggle.addEventListener('click',(e)=>{
+    e.preventDefault();e.stopPropagation();
+    panel.classList.contains('open')?closePanel():openPanel();
+  });
+  document.addEventListener('click',(e)=>{
+    if(!panel.contains(e.target)&&e.target!==toggle)closePanel();
+  });
+})();
+
+/* ===== Q&A 모듈 ===== */
+(function(){
+  // ⚠️ 아래 URL을 본인의 Google Apps Script 웹앱 배포 URL로 교체하세요.
+  // (스프레드시트에 Apps Script 코드를 붙여넣고 "웹 앱"으로 배포하면 발급되는 URL)
+  const QNA_API_URL = "YOUR_GAS_WEBAPP_URL_HERE";
+
+  const CATEGORIES = ["전체","제도·일정","교무·학사","행정·회계","복무·인사","확인서·서식","자료실·시스템","기타"];
+  let qnaItems = [];
+  let qnaFilter = "전체";
+  let qnaOpenId = null;
+  let pendingAction = null; // {type:'edit'|'delete', id}
+  let pendingAdminId = null;
+
+  function escapeHtml(s){
+    return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function fmtDate(d){
+    if(!d) return "";
+    try{
+      const dt=new Date(d);
+      if(isNaN(dt.getTime())) return String(d).slice(0,10);
+      const p=n=>String(n).padStart(2,"0");
+      return dt.getFullYear()+"."+p(dt.getMonth()+1)+"."+p(dt.getDate())+" "+p(dt.getHours())+":"+p(dt.getMinutes());
+    }catch(e){return "";}
+  }
+
+  async function apiGet(){
+    const res=await fetch(QNA_API_URL+"?action=list");
+    return res.json();
+  }
+  async function apiPost(body){
+    const res=await fetch(QNA_API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(body)
+    });
+    return res.json();
+  }
+
+  function openModal(id){document.getElementById(id).classList.add('open');}
+  function closeModal(id){document.getElementById(id).classList.remove('open');}
+  document.querySelectorAll('[data-close]').forEach(btn=>{
+    btn.addEventListener('click',()=>closeModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.qna-modal-overlay').forEach(ov=>{
+    ov.addEventListener('click',(e)=>{if(e.target===ov)ov.classList.remove('open');});
+  });
+
+  function renderRoot(){
+    const root=document.getElementById('qnaRoot');
+    if(!root) return;
+    root.innerHTML=
+      '<div class="qna-intro">📌 <b>삼계중학교 자율형 종합감사 Q&A</b><br>'+
+      '자율형 종합감사와 관련해 궁금한 점을 누구나 질문할 수 있습니다. 카테고리를 선택해 질문을 등록하면 관리자(외부감사관)가 답변을 드립니다. '+
+      '질문에는 비밀번호를 설정해 추후 본인이 직접 수정·삭제할 수 있습니다.</div>'+
+      '<button class="qna-new-btn" id="qnaOpenNewBtn">✍️ 새 질문 작성하기</button>'+
+      '<div class="qna-filterbar" id="qnaFilterBar"></div>'+
+      '<div class="qna-list" id="qnaListBox"><div class="qna-empty">불러오는 중...</div></div>';
+
+    document.getElementById('qnaOpenNewBtn').addEventListener('click',()=>{
+      document.getElementById('qnaNewMsg').innerHTML="";
+      document.getElementById('qnaNewAuthor').value="";
+      document.getElementById('qnaNewQuestion').value="";
+      document.getElementById('qnaNewPw').value="";
+      document.getElementById('qnaNewCategory').value="제도·일정";
+      openModal('qnaNewModal');
+    });
+
+    const fb=document.getElementById('qnaFilterBar');
+    CATEGORIES.forEach(cat=>{
+      const chip=document.createElement('button');
+      chip.className="qna-filter-chip"+(cat===qnaFilter?" active":"");
+      chip.textContent=cat;
+      chip.addEventListener('click',()=>{qnaFilter=cat;renderRoot();renderList();});
+      fb.appendChild(chip);
+    });
+
+    renderList();
+    loadList();
+  }
+
+  async function loadList(){
+    try{
+      const data=await apiGet();
+      if(data.ok){qnaItems=data.items||[];}
+      else{qnaItems=[];}
+    }catch(e){
+      qnaItems=[];
+    }
+    renderList(true);
+  }
+
+  function renderList(afterLoad){
+    const box=document.getElementById('qnaListBox');
+    if(!box) return;
+    if(!afterLoad && qnaItems.length===0){
+      box.innerHTML='<div class="qna-empty">불러오는 중...</div>';
+      return;
+    }
+    const filtered = qnaFilter==="전체" ? qnaItems : qnaItems.filter(q=>q.category===qnaFilter);
+    if(filtered.length===0){
+      box.innerHTML='<div class="qna-empty">아직 등록된 질문이 없습니다.<br>첫 질문을 남겨보세요 🙂</div>';
+      return;
+    }
+    box.innerHTML="";
+    filtered.forEach(q=>{
+      const card=document.createElement('div');
+      card.className="qna-card"+(qnaOpenId===q.id?" open":"");
+      const statusCls = q.answer ? "done" : "wait";
+      const statusLabel = q.answer ? "답변완료" : "대기중";
+      card.innerHTML=
+        '<div class="qna-card-head">'+
+          '<span class="qna-cat-badge">'+escapeHtml(q.category)+'</span>'+
+          '<span class="qna-q-title">'+escapeHtml(q.question)+'</span>'+
+          '<span class="qna-status '+statusCls+'">'+statusLabel+'</span>'+
+          '<span class="qna-chevron">▾</span>'+
+        '</div>'+
+        '<div class="qna-card-body">'+
+          '<div class="qna-meta">작성자 '+escapeHtml(q.author)+' · '+fmtDate(q.timestamp)+'</div>'+
+          '<div class="qna-q-full">'+escapeHtml(q.question)+'</div>'+
+          (q.answer
+            ? '<div class="qna-answer-box"><div class="qna-answer-label">🛡️ 관리자 답변 · '+fmtDate(q.answeredAt)+'</div>'+escapeHtml(q.answer)+'</div>'
+            : '<div class="qna-wait-box">아직 답변이 등록되지 않았습니다.</div>')+
+          '<div class="qna-actions">'+
+            '<button class="qna-btn" data-act="edit" data-id="'+q.id+'">✏️ 수정</button>'+
+            '<button class="qna-btn danger" data-act="delete" data-id="'+q.id+'">🗑️ 삭제</button>'+
+            '<button class="qna-btn primary" data-act="answer" data-id="'+q.id+'">🛡️ 관리자 답변</button>'+
+          '</div>'+
+        '</div>';
+      const head=card.querySelector('.qna-card-head');
+      head.addEventListener('click',()=>{
+        qnaOpenId = (qnaOpenId===q.id) ? null : q.id;
+        renderList(true);
+      });
+      box.appendChild(card);
+    });
+
+    box.querySelectorAll('[data-act="edit"]').forEach(b=>b.addEventListener('click',(e)=>{e.stopPropagation();startEdit(b.dataset.id);}));
+    box.querySelectorAll('[data-act="delete"]').forEach(b=>b.addEventListener('click',(e)=>{e.stopPropagation();startDelete(b.dataset.id);}));
+    box.querySelectorAll('[data-act="answer"]').forEach(b=>b.addEventListener('click',(e)=>{e.stopPropagation();startAdminAnswer(b.dataset.id);}));
+  }
+
+  function startEdit(id){
+    const q=qnaItems.find(x=>String(x.id)===String(id));
+    if(!q) return;
+    pendingAction={type:"edit",id:id};
+    document.getElementById('qnaAuthTitle').textContent="✏️ 질문 수정 — 비밀번호 확인";
+    document.getElementById('qnaAuthMsg').innerHTML="";
+    document.getElementById('qnaAuthEditArea').style.display="block";
+    document.getElementById('qnaAuthEditText').value=q.question;
+    document.getElementById('qnaAuthPw').value="";
+    openModal('qnaAuthModal');
+  }
+  function startDelete(id){
+    pendingAction={type:"delete",id:id};
+    document.getElementById('qnaAuthTitle').textContent="🗑️ 질문 삭제 — 비밀번호 확인";
+    document.getElementById('qnaAuthMsg').innerHTML="";
+    document.getElementById('qnaAuthEditArea').style.display="none";
+    document.getElementById('qnaAuthPw').value="";
+    openModal('qnaAuthModal');
+  }
+  function startAdminAnswer(id){
+    const q=qnaItems.find(x=>String(x.id)===String(id));
+    pendingAdminId=id;
+    document.getElementById('qnaAdminMsg').innerHTML="";
+    document.getElementById('qnaAdminPw').value="";
+    document.getElementById('qnaAdminAnswer').value = q&&q.answer ? q.answer : "";
+    openModal('qnaAdminModal');
+  }
+
+  document.getElementById('qnaNewSubmit').addEventListener('click', async ()=>{
+    const category=document.getElementById('qnaNewCategory').value;
+    const author=document.getElementById('qnaNewAuthor').value.trim();
+    const question=document.getElementById('qnaNewQuestion').value.trim();
+    const pw=document.getElementById('qnaNewPw').value;
+    const msg=document.getElementById('qnaNewMsg');
+    if(!author||!question){msg.innerHTML='<div class="qna-msg error">작성자와 질문 내용을 입력해주세요.</div>';return;}
+    if(!pw||pw.length<4){msg.innerHTML='<div class="qna-msg error">비밀번호를 4자리 이상 입력해주세요.</div>';return;}
+    msg.innerHTML='<div class="qna-msg success">등록 중...</div>';
+    try{
+      const r=await apiPost({action:"create",category,author,question,password:pw});
+      if(r.ok){
+        closeModal('qnaNewModal');
+        await loadList();
+      }else{
+        msg.innerHTML='<div class="qna-msg error">'+escapeHtml(r.error||"등록 실패")+'</div>';
+      }
+    }catch(e){
+      msg.innerHTML='<div class="qna-msg error">네트워크 오류로 등록에 실패했습니다.</div>';
+    }
+  });
+
+  document.getElementById('qnaAuthSubmit').addEventListener('click', async ()=>{
+    if(!pendingAction) return;
+    const pw=document.getElementById('qnaAuthPw').value;
+    const msg=document.getElementById('qnaAuthMsg');
+    if(!pw){msg.innerHTML='<div class="qna-msg error">비밀번호를 입력해주세요.</div>';return;}
+    msg.innerHTML='<div class="qna-msg success">처리 중...</div>';
+    try{
+      let r;
+      if(pendingAction.type==="edit"){
+        const newText=document.getElementById('qnaAuthEditText').value.trim();
+        if(!newText){msg.innerHTML='<div class="qna-msg error">질문 내용을 입력해주세요.</div>';return;}
+        r=await apiPost({action:"edit",id:pendingAction.id,password:pw,question:newText});
+      }else{
+        r=await apiPost({action:"delete",id:pendingAction.id,password:pw});
+      }
+      if(r.ok){
+        closeModal('qnaAuthModal');
+        pendingAction=null;
+        await loadList();
+      }else{
+        msg.innerHTML='<div class="qna-msg error">'+escapeHtml(r.error||"처리 실패")+'</div>';
+      }
+    }catch(e){
+      msg.innerHTML='<div class="qna-msg error">네트워크 오류가 발생했습니다.</div>';
+    }
+  });
+
+  document.getElementById('qnaAdminSubmit').addEventListener('click', async ()=>{
+    if(!pendingAdminId) return;
+    const pw=document.getElementById('qnaAdminPw').value;
+    const answer=document.getElementById('qnaAdminAnswer').value.trim();
+    const msg=document.getElementById('qnaAdminMsg');
+    if(!pw){msg.innerHTML='<div class="qna-msg error">관리자 비밀번호를 입력해주세요.</div>';return;}
+    if(!answer){msg.innerHTML='<div class="qna-msg error">답변 내용을 입력해주세요.</div>';return;}
+    msg.innerHTML='<div class="qna-msg success">등록 중...</div>';
+    try{
+      const r=await apiPost({action:"answer",id:pendingAdminId,adminPassword:pw,answer:answer});
+      if(r.ok){
+        closeModal('qnaAdminModal');
+        pendingAdminId=null;
+        await loadList();
+      }else{
+        msg.innerHTML='<div class="qna-msg error">'+escapeHtml(r.error||"답변 등록 실패")+'</div>';
+      }
+    }catch(e){
+      msg.innerHTML='<div class="qna-msg error">네트워크 오류가 발생했습니다.</div>';
+    }
+  });
+
+  // Q&A 탭 클릭 시 최초 렌더
+  const origSwitchTab = switchTab;
+  window.switchTab = function(tabId){
+    origSwitchTab(tabId);
+    if(tabId==="qna"){
+      const root=document.getElementById('qnaRoot');
+      if(root && !root.dataset.inited){
+        root.dataset.inited="1";
+        renderRoot();
+      }
+    }
+  };
+  // 탭 클릭 핸들러가 이미 buildTabs()에서 switchTab 클로저를 바인딩했으므로,
+  // 최초 진입 시 activeTab이 qna인 경우를 위해 한 번 점검
+  if(activeTab==="qna"){
+    const root=document.getElementById('qnaRoot');
+    if(root){root.dataset.inited="1";renderRoot();}
+  }
+})();
+</script>
+</body>
+</html>
