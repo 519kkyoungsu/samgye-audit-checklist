@@ -264,6 +264,23 @@
   .qna-msg.error{background:var(--red-soft);color:var(--red);}
   .qna-msg.success{background:var(--forest-soft);color:var(--forest);}
 
+  /* ===== Q&A 잠금 화면 ===== */
+  .qna-lock-box{max-width:380px;margin:40px auto;background:var(--paper);border:1.5px solid var(--line);
+    border-radius:14px;padding:28px 26px;text-align:center;}
+  .qna-lock-icon{font-size:34px;margin-bottom:10px;}
+  .qna-lock-title{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+  .qna-lock-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+  .qna-lock-input{width:100%;font-family:Consolas,monospace;font-size:17px;letter-spacing:3px;
+    text-align:center;border:1.5px solid var(--line);border-radius:9px;padding:10px;
+    background:#FDFBF5;color:var(--ink);margin-bottom:10px;}
+  .qna-lock-input:focus{outline:none;border-color:var(--terra);}
+  .qna-lock-btn{width:100%;font-family:inherit;font-size:13.5px;font-weight:800;color:#fff;
+    background:var(--terra);border:none;border-radius:9px;padding:10px;cursor:pointer;transition:all .12s;}
+  .qna-lock-btn:hover{background:var(--terra-dark);}
+  .qna-lock-error{font-size:12px;color:var(--red);background:var(--red-soft);border-radius:7px;
+    padding:6px 10px;margin-bottom:10px;display:none;}
+  .qna-lock-error.show{display:block;}
+
   /* ===== 모달 (새 질문 / 비번 확인) ===== */
   .qna-modal-overlay{display:none;position:fixed;inset:0;background:rgba(43,38,34,0.45);
     z-index:50;align-items:center;justify-content:center;padding:16px;}
@@ -1367,6 +1384,8 @@ const DATA = [
 
 /* ============ RENDER ============ */
 const STORAGE_KEY = "samgye_AuditChecklist:v4";
+const QNA_LOCK_PW = "3701"; // Q&A 탭 열람 비밀번호 (삼계중 선생님 전용)
+let qnaUnlocked = false; // 새로고침 시 false로 초기화 (메모리 변수 — 세션 동안만 유지)
 let checked = new Set();
 let activeTab = DATA[0].id;
 
@@ -1615,9 +1634,49 @@ load();
     ov.addEventListener('click',(e)=>{if(e.target===ov)ov.classList.remove('open');});
   });
 
+  /* ----- 잠금 화면 ----- */
+  function renderLockScreen(){
+    const root=document.getElementById('qnaRoot');
+    if(!root) return;
+    root.innerHTML=
+      '<div class="qna-lock-box">'+
+        '<div class="qna-lock-icon">🔒</div>'+
+        '<div class="qna-lock-title">삼계중학교 선생님 전용</div>'+
+        '<div class="qna-lock-desc">Q&amp;A 게시판은 삼계중학교 교직원만 열람할 수 있습니다.<br>비밀번호를 입력해주세요.</div>'+
+        '<div class="qna-lock-error" id="qnaLockError">비밀번호가 올바르지 않습니다.</div>'+
+        '<input class="qna-lock-input" id="qnaLockInput" type="password" placeholder="••••" maxlength="20" inputmode="numeric">'+
+        '<button class="qna-lock-btn" id="qnaLockBtn">입장하기</button>'+
+      '</div>';
+
+    const input=document.getElementById('qnaLockInput');
+    const btn=document.getElementById('qnaLockBtn');
+    const errBox=document.getElementById('qnaLockError');
+
+    function attempt(){
+      const val=input.value.trim();
+      if(val===QNA_LOCK_PW){
+        qnaUnlocked=true;
+        renderRoot();
+      }else{
+        errBox.classList.add('show');
+        input.value="";
+        input.focus();
+      }
+    }
+    btn.addEventListener('click',attempt);
+    input.addEventListener('keydown',e=>{if(e.key==="Enter"){e.preventDefault();attempt();}});
+    setTimeout(()=>input.focus(),50);
+  }
+
   function renderRoot(){
     const root=document.getElementById('qnaRoot');
     if(!root) return;
+
+    if(!qnaUnlocked){
+      renderLockScreen();
+      return;
+    }
+
     root.innerHTML=
       '<div class="qna-intro">📌 <b>삼계중학교 자율형 종합감사 Q&A</b><br>'+
       '자율형 종합감사와 관련해 궁금한 점을 누구나 질문할 수 있습니다. 카테고리를 선택해 질문을 등록하면 관리자(외부감사관)가 답변을 드립니다. '+
