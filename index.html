@@ -276,6 +276,23 @@
     color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px;}
   .qna-modal-foot{display:flex;gap:8px;margin-top:4px;}
   .qna-modal-foot .qna-btn{flex:1;text-align:center;justify-content:center;padding:9px;font-size:13px;}
+
+  /* ===== 지적 사례 (Notion 연동) ===== */
+  .notion-intro{background:#F3EFFC;border:1.5px solid #C4B0EE;border-radius:12px;
+    padding:12px 15px;margin:12px 0 4px;font-size:13px;color:#4A3B7A;line-height:1.6;}
+  .notion-intro b{color:#5B3EB5;}
+  .notion-openbar{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin:12px 0 4px;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
+    padding:11px 14px;}
+  .notion-openbar-label{font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .notion-open-link{flex:none;font-family:inherit;font-size:12.5px;font-weight:800;color:#fff;
+    background:#5B3EB5;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;
+    text-decoration:none;white-space:nowrap;}
+  .notion-open-link:hover{background:#46308F;}
+  .notion-embed-box{margin-top:10px;border:1.5px solid var(--line);border-radius:12px;
+    overflow:hidden;background:#FAFAFA;height:640px;}
+  .notion-embed-box iframe{width:100%;height:100%;border:0;}
+  .notion-fallback{padding:30px 16px;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.7;}
 </style>
 </head>
 <body>
@@ -1343,6 +1360,9 @@ const DATA = [
 },
 {
   id:"qna", label:"Q&A", icon:"💬", qna:true, sections:[]
+},
+{
+  id:"notioncases", label:"지적 사례", icon:"📓", notionCases:true, sections:[]
 }
 ];
 
@@ -1357,7 +1377,7 @@ const barFill = document.getElementById('barFill');
 const pctText = document.getElementById('pctText');
 
 function itemId(tabId,si,ii){return tabId+"-"+si+"-"+ii;}
-function totalCount(){return DATA.filter(t=>!t.qna).reduce((s,t)=>s+t.sections.reduce((a,sec)=>a+sec.items.length,0),0);}
+function totalCount(){return DATA.filter(t=>!t.qna&&!t.notionCases).reduce((s,t)=>s+t.sections.reduce((a,sec)=>a+sec.items.length,0),0);}
 function tabDone(tab){let d=0,t=0;tab.sections.forEach((sec,si)=>sec.items.forEach((_,ii)=>{t++;if(checked.has(itemId(tab.id,si,ii)))d++;}));return[d,t];}
 function checkSVG(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';}
 
@@ -1367,7 +1387,7 @@ function buildTabs(){
     const btn=document.createElement('button');
     btn.className="tab"+(tab.id===activeTab?" active":"");
     btn.dataset.tab=tab.id;
-    if(tab.qna){
+    if(tab.qna||tab.notionCases){
       btn.innerHTML='<span class="tab-icon">'+tab.icon+'</span><span class="tab-label">'+tab.label+'</span>';
     }else{
       const [d,t]=tabDone(tab);
@@ -1414,6 +1434,14 @@ function buildPanels(){
       panel.appendChild(qc);
       wrap.appendChild(panel);
       return; // qna 탭은 체크리스트 섹션 렌더링 생략
+    }
+
+    if(tab.notionCases){
+      const nc=document.createElement('div');
+      nc.id="notionCasesRoot";
+      panel.appendChild(nc);
+      wrap.appendChild(panel);
+      return; // 노션 지적사례 탭은 체크리스트 섹션 렌더링 생략
     }
 
     tab.sections.forEach((sec,si)=>{
@@ -1792,14 +1820,47 @@ load();
         renderRoot();
       }
     }
+    if(tabId==="notioncases"){
+      const nroot=document.getElementById('notionCasesRoot');
+      if(nroot && !nroot.dataset.inited && window.renderNotionCases){
+        nroot.dataset.inited="1";
+        window.renderNotionCases();
+      }
+    }
   };
   // 탭 클릭 핸들러가 이미 buildTabs()에서 switchTab 클로저를 바인딩했으므로,
-  // 최초 진입 시 activeTab이 qna인 경우를 위해 한 번 점검
+  // 최초 진입 시 activeTab이 qna/notioncases인 경우를 위해 한 번 점검
   if(activeTab==="qna"){
     const root=document.getElementById('qnaRoot');
     if(root){root.dataset.inited="1";renderRoot();}
   }
+  if(activeTab==="notioncases"){
+    const nroot=document.getElementById('notionCasesRoot');
+    if(nroot && window.renderNotionCases){nroot.dataset.inited="1";window.renderNotionCases();}
+  }
 })();
+
+/* ===== 지적 사례 (Notion 연동) 모듈 ===== */
+(function(){
+  const NOTION_URL = "https://www.notion.so/384af5f6a02580fbaab9cfb3ef658b55?source=copy_link";
+  const NOTION_EMBED_URL = "https://www.notion.so/384af5f6a02580fbaab9cfb3ef658b55";
+
+  window.renderNotionCases = function(){
+    const root=document.getElementById('notionCasesRoot');
+    if(!root) return;
+    root.innerHTML=
+      '<div class="notion-intro">📓 <b>감사 지적 사례 모음 (Notion)</b><br>'+
+      '타 학교 자율형 종합감사에서 실제로 지적된 사례들을 정리한 노션 페이지입니다. 아래에서 바로 확인하시고, 더 편하게 보시려면 새 탭에서 여세요.</div>'+
+      '<div class="notion-openbar">'+
+        '<span class="notion-openbar-label">📓 노션 페이지가 아래에 보이지 않으면 새 탭에서 열어주세요</span>'+
+        '<a class="notion-open-link" href="'+NOTION_URL+'" target="_blank" rel="noopener">새 탭에서 열기 ↗</a>'+
+      '</div>'+
+      '<div class="notion-embed-box" id="notionEmbedBox">'+
+        '<iframe src="'+NOTION_EMBED_URL+'" loading="lazy" title="감사 지적 사례 (Notion)" referrerpolicy="no-referrer-when-downgrade"></iframe>'+
+      '</div>';
+  };
+})();
+
 </script>
 </body>
 </html>
